@@ -1,4 +1,4 @@
-async function request(path, options = {}) {
+async function requestNetwork(path, options = {}) {
   const response = await fetch(
     path,
     {
@@ -18,6 +18,80 @@ async function request(path, options = {}) {
   }
 
   return response.json();
+}
+
+const phoenixRequestCache = new Map();
+const phoenixRequestInflight = new Map();
+
+const PHOENIX_CACHE_TTL = 5000;
+
+const phoenixCacheablePaths = new Set([
+  "../api/phoenix/system-control/status",
+  "../api/phoenix/home-assistant/status",
+  "../api/phoenix/home-assistant/entity-registry",
+  "../api/phoenix/home-assistant/entities",
+  "../api/phoenix/home-assistant/devices",
+  "../api/phoenix/home-assistant/areas",
+  "../api/phoenix/home-assistant/labels",
+  "../api/phoenix/home-assistant/automations",
+  "../api/phoenix/home-assistant/scripts"
+]);
+
+async function request(path, options = {}) {
+  const method =
+    String(options.method || "GET").toUpperCase();
+
+  const cacheable =
+    method === "GET" &&
+    phoenixCacheablePaths.has(path);
+
+  if (!cacheable) {
+    return requestNetwork(path, options);
+  }
+
+  const now = Date.now();
+  const cached =
+    phoenixRequestCache.get(path);
+
+  if (
+    cached &&
+    now - cached.timestamp < PHOENIX_CACHE_TTL
+  ) {
+    return cached.value;
+  }
+
+  const running =
+    phoenixRequestInflight.get(path);
+
+  if (running) {
+    return running;
+  }
+
+  const promise = requestNetwork(
+    path,
+    options
+  )
+    .then(value => {
+      phoenixRequestCache.set(
+        path,
+        {
+          timestamp: Date.now(),
+          value
+        }
+      );
+
+      return value;
+    })
+    .finally(() => {
+      phoenixRequestInflight.delete(path);
+    });
+
+  phoenixRequestInflight.set(
+    path,
+    promise
+  );
+
+  return promise;
 }
 
 export async function loadLabels() {
@@ -661,4 +735,18 @@ export async function loadDeviceAutomationActions(deviceId) {
     "../api/phoenix/home-assistant/devices/" +
     `${encodeURIComponent(deviceId)}/automation-actions`
   );
+}
+
+export function preloadPhoenixOverviewData() {
+  return Promise.allSettled([
+    loadPhoenixStatus(),
+    loadHomeAssistantStatus(),
+    loadHomeAssistantEntityRegistry(),
+    loadHomeAssistantEntities(),
+    loadHomeAssistantDevices(),
+    loadHomeAssistantAreas(),
+    loadHomeAssistantLabels(),
+    loadHomeAssistantAutomations(),
+    loadHomeAssistantScripts()
+  ]);
 }

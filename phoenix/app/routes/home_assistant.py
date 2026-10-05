@@ -9,6 +9,7 @@ import json
 from fastapi import APIRouter, Body
 
 from app.services.home_assistant import ha_ws_call, ha_rest_call
+from app.services.supervisor import supervisor_request
 from app.core.context_paths import ContextPaths
 
 
@@ -248,10 +249,21 @@ async def phoenix_home_assistant_ronny_ai_history(
 @router.get("/api/phoenix/home-assistant/status")
 async def phoenix_home_assistant_status():
     """Liest zentrale Home-Assistant-Systemdaten read-only."""
+    import socket
+    import time
+    from datetime import datetime, timezone
+    from urllib.parse import urlparse
+
+    started_at = time.perf_counter()
 
     result = await ha_ws_call({
         "type": "get_config",
     })
+
+    response_time_ms = round(
+        (time.perf_counter() - started_at) * 1000,
+        1,
+    )
 
     if not result.get("ok"):
         return {
@@ -264,6 +276,28 @@ async def phoenix_home_assistant_status():
         }
 
     config = result.get("result") or {}
+
+    internal_url = config.get("internal_url")
+
+    internal_host = None
+    ip_address = None
+
+    if internal_url:
+        try:
+            internal_host = urlparse(
+                internal_url
+            ).hostname
+
+            if internal_host:
+                ip_address = socket.gethostbyname(
+                    internal_host
+                )
+        except (OSError, ValueError):
+            ip_address = None
+
+    checked_at = datetime.now(
+        timezone.utc
+    ).isoformat()
 
     states_result = await ha_ws_call({
         "type": "get_states",
@@ -314,10 +348,83 @@ async def phoenix_home_assistant_status():
 
     components = config.get("components") or []
 
+    supervisor_data = {}
+    core_data = {}
+    os_data = {}
+    network_data = {}
+    primary_network = None
+
+    try:
+        core_result = supervisor_request(
+            "GET",
+            "/core/info",
+        )
+        core_data = core_result.get("data") or {}
+    except Exception:
+        core_data = {}
+
+    try:
+        supervisor_result = supervisor_request(
+            "GET",
+            "/supervisor/info",
+        )
+        supervisor_data = (
+            supervisor_result.get("data") or {}
+        )
+    except Exception:
+        supervisor_data = {}
+
+    try:
+        os_result = supervisor_request(
+            "GET",
+            "/os/info",
+        )
+        os_data = os_result.get("data") or {}
+    except Exception:
+        os_data = {}
+
+    try:
+        network_result = supervisor_request(
+            "GET",
+            "/network/info",
+        )
+        network_data = (
+            network_result.get("data") or {}
+        )
+
+        for interface in (
+            network_data.get("interfaces") or []
+        ):
+            if interface.get("primary") is True:
+                primary_network = interface
+                break
+
+    except Exception:
+        network_data = {}
+        primary_network = None
+
+    lan_ip = None
+    gateway = None
+
+    if primary_network:
+        ipv4 = primary_network.get("ipv4") or {}
+        addresses = ipv4.get("address") or []
+
+        if addresses:
+            lan_ip = str(
+                addresses[0]
+            ).split("/", 1)[0]
+
+        gateway = ipv4.get("gateway")
+
     return {
         "status": "ok",
         "connected": True,
+        "response_time_ms": response_time_ms,
+        "checked_at": checked_at,
         "home_assistant": {
+            "host": internal_host,
+            "ip_address": ip_address,
             "location_name":
                 config.get("location_name"),
             "version":
@@ -350,6 +457,68 @@ async def phoenix_home_assistant_status():
             "last_boot":
                 last_boot.get("state")
                 if last_boot else None,
+        },
+        "system": {
+            "core": {
+                "version":
+                    core_data.get("version"),
+                "latest_version":
+                    core_data.get("version_latest"),
+                "update_available":
+                    core_data.get("update_available"),
+                "machine":
+                    core_data.get("machine"),
+                "architecture":
+                    core_data.get("arch"),
+            },
+            "supervisor": {
+                "version":
+                    supervisor_data.get("version"),
+                "latest_version":
+                    supervisor_data.get("version_latest"),
+                "update_available":
+                    supervisor_data.get("update_available"),
+                "architecture":
+                    supervisor_data.get("arch"),
+                "channel":
+                    supervisor_data.get("channel"),
+                "healthy":
+                    supervisor_data.get("healthy"),
+                "supported":
+                    supervisor_data.get("supported"),
+                "timezone":
+                    supervisor_data.get("timezone"),
+            },
+            "os": {
+                "version":
+                    os_data.get("version"),
+                "latest_version":
+                    os_data.get("version_latest"),
+                "update_available":
+                    os_data.get("update_available"),
+                "board":
+                    os_data.get("board"),
+                "boot":
+                    os_data.get("boot"),
+                "data_disk":
+                    os_data.get("data_disk"),
+            },
+            "network": {
+                "interface":
+                    primary_network.get("interface")
+                    if primary_network else None,
+                "connected":
+                    primary_network.get("connected")
+                    if primary_network else None,
+                "ip_address":
+                    lan_ip,
+                "gateway":
+                    gateway,
+                "host_internet":
+                    network_data.get("host_internet"),
+                "supervisor_internet":
+                    network_data.get("supervisor_internet"),
+            },
         },
     }
 

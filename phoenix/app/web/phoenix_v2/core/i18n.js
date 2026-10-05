@@ -1,7 +1,7 @@
 const translations = {
   de: {
     navigation: {
-      overview: "Übersicht",
+      overview: "Systemübersicht",
       ai: "Ronny AI",
       homeAssistant: "Home Assistant",
       devices: "Geräte",
@@ -55,7 +55,7 @@ const translations = {
       systemStatusLoading: "Systemstatus wird geladen …",
       checkingHomeAssistant: "Home Assistant wird geprüft",
       systemStatusUnavailable: "Der Systemstatus konnte nicht geladen werden.",
-    
+
       smartHome: "Smart Home",
       entitiesMetric: "Entitäten",
       devicesMetric: "Geräte",
@@ -75,6 +75,31 @@ const translations = {
       ronnyAiDescription: "Intelligente Systemprüfung, Fehleranalyse und Optimierungsvorschläge",
       preparing: "Vorbereitung",
       systemStatus: "Systemstatus",
+      connectionSection: "Verbindung",
+      networkSection: "Netzwerk",
+      systemSection: "System",
+      phoenixSection: "Dr. Ronny OS Phoenix",
+      online: "Online",
+      offline: "Offline",
+      responseTime: "Antwortzeit",
+      lastCheck: "Letzte Prüfung",
+      ipAddress: "IP-Adresse",
+      networkInterface: "Netzwerkschnittstelle",
+      internetAccess: "Internetzugang",
+      hostInternet: "Host-Internet",
+      supervisorInternet: "Supervisor-Internet",
+      supervisor: "Supervisor",
+      homeAssistantOs: "Home Assistant OS",
+      architecture: "Architektur",
+      channel: "Kanal",
+      healthy: "Gesund",
+      supported: "Unterstützt",
+      bootSlot: "Boot-Slot",
+      dataDisk: "Datenträger",
+      updateStatus: "Update-Status",
+      noUpdateAvailable: "Aktuell",
+      yes: "Ja",
+      no: "Nein",
 },
 
     ronnyAi: {
@@ -171,7 +196,7 @@ const translations = {
       partialCheck: "Prüfung teilweise verfügbar",
       noIssues: "Keine Auffälligkeiten",
       issuesDetected: "{count} Hinweise erkannt",
-    
+
       areaSuggestions: "Bereichsvorschläge",
       areaSuggestionsText: "Sichere Vorschläge aus bereits vorhandenen Home-Assistant-Zuordnungen.",
       noAreaSuggestions: "Aktuell keine sicheren Bereichsvorschläge gefunden.",
@@ -695,7 +720,7 @@ const translations = {
       save: "Ändern",
       assignmentUnchanged: "Bereichszuordnung wurde nicht geändert.",
       assignmentFailed: "Bereichszuordnung konnte nicht geändert werden.",
-    
+
       confirmMove: "{item} wirklich nach {area} verschieben?",
       confirmRemoveDevice: "Bereichszuordnung von {item} wirklich entfernen?",
       confirmAssignEntity: "{item} wirklich direkt {area} zuordnen?",
@@ -721,7 +746,7 @@ const translations = {
 
   en: {
     navigation: {
-      overview: "Overview",
+      overview: "System overview",
       ai: "Ronny AI",
       homeAssistant: "Home Assistant",
       devices: "Devices",
@@ -775,7 +800,7 @@ const translations = {
       systemStatusLoading: "Loading system status …",
       checkingHomeAssistant: "Checking Home Assistant",
       systemStatusUnavailable: "The system status could not be loaded.",
-    
+
       smartHome: "Smart Home",
       entitiesMetric: "Entities",
       devicesMetric: "Devices",
@@ -795,6 +820,31 @@ const translations = {
       ronnyAiDescription: "Intelligent system checks, error analysis and optimization suggestions",
       preparing: "Preparing",
       systemStatus: "System status",
+      connectionSection: "Connection",
+      networkSection: "Network",
+      systemSection: "System",
+      phoenixSection: "Dr. Ronny OS Phoenix",
+      online: "Online",
+      offline: "Offline",
+      responseTime: "Response time",
+      lastCheck: "Last check",
+      ipAddress: "IP address",
+      networkInterface: "Network interface",
+      internetAccess: "Internet access",
+      hostInternet: "Host internet",
+      supervisorInternet: "Supervisor internet",
+      supervisor: "Supervisor",
+      homeAssistantOs: "Home Assistant OS",
+      architecture: "Architecture",
+      channel: "Channel",
+      healthy: "Healthy",
+      supported: "Supported",
+      bootSlot: "Boot slot",
+      dataDisk: "Data disk",
+      updateStatus: "Update status",
+      noUpdateAvailable: "Up to date",
+      yes: "Yes",
+      no: "No",
 },
 
     ronnyAi: {
@@ -891,7 +941,7 @@ const translations = {
       partialCheck: "Check partially available",
       noIssues: "No anomalies detected",
       issuesDetected: "{count} notices detected",
-    
+
       areaSuggestions: "Area suggestions",
       areaSuggestionsText: "Reliable suggestions derived from existing Home Assistant assignments.",
       noAreaSuggestions: "No reliable area suggestions found at the moment.",
@@ -1402,7 +1452,7 @@ const translations = {
       save: "Change",
       assignmentUnchanged: "Area assignment was not changed.",
       assignmentFailed: "Area assignment could not be changed.",
-    
+
       confirmMove: "Really move {item} to {area}?",
       confirmRemoveDevice: "Really remove the area assignment from {item}?",
       confirmAssignEntity: "Really assign {item} directly to {area}?",
@@ -1428,7 +1478,7 @@ const translations = {
 
   ru: {
     navigation: {
-      overview: "Обзор",
+      overview: "Обзор системы",
       ai: "Ronny AI",
       homeAssistant: "Home Assistant",
       devices: "Устройства",
@@ -1477,7 +1527,7 @@ const translations = {
       systemStatusLoading: "Загрузка состояния системы …",
       checkingHomeAssistant: "Проверка Home Assistant",
       systemStatusUnavailable: "Не удалось загрузить состояние системы.",
-    
+
       smartHome: "Умный дом",
       entitiesMetric: "Сущности",
       devicesMetric: "Устройства",
@@ -1497,6 +1547,31 @@ const translations = {
       ronnyAiDescription: "Интеллектуальная проверка системы, анализ ошибок и предложения по оптимизации",
       preparing: "Подготовка",
       systemStatus: "Состояние системы",
+      connectionSection: "Подключение",
+      networkSection: "Сеть",
+      systemSection: "Система",
+      phoenixSection: "Dr. Ronny OS Phoenix",
+      online: "В сети",
+      offline: "Не в сети",
+      responseTime: "Время отклика",
+      lastCheck: "Последняя проверка",
+      ipAddress: "IP-адрес",
+      networkInterface: "Сетевой интерфейс",
+      internetAccess: "Доступ в интернет",
+      hostInternet: "Интернет хоста",
+      supervisorInternet: "Интернет Supervisor",
+      supervisor: "Supervisor",
+      homeAssistantOs: "Home Assistant OS",
+      architecture: "Архитектура",
+      channel: "Канал",
+      healthy: "Исправен",
+      supported: "Поддерживается",
+      bootSlot: "Загрузочный слот",
+      dataDisk: "Диск данных",
+      updateStatus: "Статус обновления",
+      noUpdateAvailable: "Актуально",
+      yes: "Да",
+      no: "Нет",
 },
     ronnyAi: {
       title: "Ronny AI",
@@ -1592,7 +1667,7 @@ const translations = {
       partialCheck: "Проверка доступна частично",
       noIssues: "Отклонений не обнаружено",
       issuesDetected: "Обнаружено замечаний: {count}",
-    
+
       areaSuggestions: "Предложения по зонам",
       areaSuggestionsText: "Надёжные предложения на основе существующих назначений Home Assistant.",
       noAreaSuggestions: "Надёжных предложений по зонам сейчас не найдено.",
@@ -2106,7 +2181,7 @@ const translations = {
       save: "Изменить",
       assignmentUnchanged: "Назначение зоны не было изменено.",
       assignmentFailed: "Не удалось изменить назначение зоны.",
-    
+
       confirmMove: "Переместить {item} в зону {area}?",
       confirmRemoveDevice: "Удалить назначение зоны для {item}?",
       confirmAssignEntity: "Назначить {item} непосредственно зоне {area}?",
@@ -2131,7 +2206,7 @@ const translations = {
 
   it: {
     navigation: {
-      overview: "Panoramica",
+      overview: "Panoramica del sistema",
       ai: "Ronny AI",
       homeAssistant: "Home Assistant",
       devices: "Dispositivi",
@@ -2180,7 +2255,7 @@ const translations = {
       systemStatusLoading: "Caricamento dello stato del sistema …",
       checkingHomeAssistant: "Verifica di Home Assistant",
       systemStatusUnavailable: "Impossibile caricare lo stato del sistema.",
-    
+
       smartHome: "Smart Home",
       entitiesMetric: "Entità",
       devicesMetric: "Dispositivi",
@@ -2200,6 +2275,31 @@ const translations = {
       ronnyAiDescription: "Controllo intelligente del sistema, analisi degli errori e suggerimenti di ottimizzazione",
       preparing: "Preparazione",
       systemStatus: "Stato del sistema",
+      connectionSection: "Connessione",
+      networkSection: "Rete",
+      systemSection: "Sistema",
+      phoenixSection: "Dr. Ronny OS Phoenix",
+      online: "Online",
+      offline: "Offline",
+      responseTime: "Tempo di risposta",
+      lastCheck: "Ultimo controllo",
+      ipAddress: "Indirizzo IP",
+      networkInterface: "Interfaccia di rete",
+      internetAccess: "Accesso a Internet",
+      hostInternet: "Internet host",
+      supervisorInternet: "Internet Supervisor",
+      supervisor: "Supervisor",
+      homeAssistantOs: "Home Assistant OS",
+      architecture: "Architettura",
+      channel: "Canale",
+      healthy: "Integro",
+      supported: "Supportato",
+      bootSlot: "Slot di avvio",
+      dataDisk: "Disco dati",
+      updateStatus: "Stato aggiornamento",
+      noUpdateAvailable: "Aggiornato",
+      yes: "Sì",
+      no: "No",
 },
     ronnyAi: {
       title: "Ronny AI",
@@ -2295,7 +2395,7 @@ const translations = {
       partialCheck: "Controllo disponibile parzialmente",
       noIssues: "Nessuna anomalia rilevata",
       issuesDetected: "{count} avvisi rilevati",
-    
+
       areaSuggestions: "Suggerimenti area",
       areaSuggestionsText: "Suggerimenti affidabili ricavati dalle assegnazioni esistenti di Home Assistant.",
       noAreaSuggestions: "Al momento non sono stati trovati suggerimenti area affidabili.",
@@ -2809,7 +2909,7 @@ const translations = {
       save: "Modifica",
       assignmentUnchanged: "L'assegnazione dell'area non è stata modificata.",
       assignmentFailed: "Impossibile modificare l'assegnazione dell'area.",
-    
+
       confirmMove: "Spostare davvero {item} in {area}?",
       confirmRemoveDevice: "Rimuovere l'assegnazione dell'area di {item}?",
       confirmAssignEntity: "Assegnare direttamente {item} a {area}?",
@@ -2834,7 +2934,7 @@ const translations = {
 
   es: {
     navigation: {
-      overview: "Resumen",
+      overview: "Resumen del sistema",
       ai: "Ronny AI",
       homeAssistant: "Home Assistant",
       devices: "Dispositivos",
@@ -2883,7 +2983,7 @@ const translations = {
       systemStatusLoading: "Cargando el estado del sistema …",
       checkingHomeAssistant: "Comprobando Home Assistant",
       systemStatusUnavailable: "No se pudo cargar el estado del sistema.",
-    
+
       smartHome: "Smart Home",
       entitiesMetric: "Entidades",
       devicesMetric: "Dispositivos",
@@ -2903,6 +3003,31 @@ const translations = {
       ronnyAiDescription: "Comprobación inteligente del sistema, análisis de errores y sugerencias de optimización",
       preparing: "Preparando",
       systemStatus: "Estado del sistema",
+      connectionSection: "Conexión",
+      networkSection: "Red",
+      systemSection: "Sistema",
+      phoenixSection: "Dr. Ronny OS Phoenix",
+      online: "En línea",
+      offline: "Sin conexión",
+      responseTime: "Tiempo de respuesta",
+      lastCheck: "Última comprobación",
+      ipAddress: "Dirección IP",
+      networkInterface: "Interfaz de red",
+      internetAccess: "Acceso a Internet",
+      hostInternet: "Internet del host",
+      supervisorInternet: "Internet del Supervisor",
+      supervisor: "Supervisor",
+      homeAssistantOs: "Home Assistant OS",
+      architecture: "Arquitectura",
+      channel: "Canal",
+      healthy: "Saludable",
+      supported: "Compatible",
+      bootSlot: "Ranura de arranque",
+      dataDisk: "Disco de datos",
+      updateStatus: "Estado de actualización",
+      noUpdateAvailable: "Actualizado",
+      yes: "Sí",
+      no: "No",
 },
     ronnyAi: {
       title: "Ronny AI",
@@ -2998,7 +3123,7 @@ const translations = {
       partialCheck: "Comprobación disponible parcialmente",
       noIssues: "No se detectaron anomalías",
       issuesDetected: "{count} avisos detectados",
-    
+
       areaSuggestions: "Sugerencias de áreas",
       areaSuggestionsText: "Sugerencias fiables basadas en asignaciones existentes de Home Assistant.",
       noAreaSuggestions: "Actualmente no se encontraron sugerencias de área fiables.",
@@ -3511,7 +3636,7 @@ const translations = {
       save: "Cambiar",
       assignmentUnchanged: "La asignación del área no se modificó.",
       assignmentFailed: "No se pudo modificar la asignación del área.",
-    
+
       confirmMove: "¿Mover realmente {item} a {area}?",
       confirmRemoveDevice: "¿Eliminar la asignación de área de {item}?",
       confirmAssignEntity: "¿Asignar directamente {item} a {area}?",
@@ -3536,7 +3661,7 @@ const translations = {
 
   ar: {
     navigation: {
-      overview: "نظرة عامة",
+      overview: "نظرة عامة على النظام",
       ai: "Ronny AI",
       homeAssistant: "Home Assistant",
       devices: "الأجهزة",
@@ -3585,7 +3710,7 @@ const translations = {
       systemStatusLoading: "جارٍ تحميل حالة النظام …",
       checkingHomeAssistant: "جارٍ فحص Home Assistant",
       systemStatusUnavailable: "تعذر تحميل حالة النظام.",
-    
+
       smartHome: "المنزل الذكي",
       entitiesMetric: "الكيانات",
       devicesMetric: "الأجهزة",
@@ -3605,6 +3730,31 @@ const translations = {
       ronnyAiDescription: "فحص ذكي للنظام وتحليل الأخطاء واقتراحات للتحسين",
       preparing: "قيد الإعداد",
       systemStatus: "حالة النظام",
+      connectionSection: "الاتصال",
+      networkSection: "الشبكة",
+      systemSection: "النظام",
+      phoenixSection: "Dr. Ronny OS Phoenix",
+      online: "متصل",
+      offline: "غير متصل",
+      responseTime: "زمن الاستجابة",
+      lastCheck: "آخر فحص",
+      ipAddress: "عنوان IP",
+      networkInterface: "واجهة الشبكة",
+      internetAccess: "الوصول إلى الإنترنت",
+      hostInternet: "إنترنت المضيف",
+      supervisorInternet: "إنترنت Supervisor",
+      supervisor: "Supervisor",
+      homeAssistantOs: "Home Assistant OS",
+      architecture: "البنية",
+      channel: "القناة",
+      healthy: "سليم",
+      supported: "مدعوم",
+      bootSlot: "فتحة الإقلاع",
+      dataDisk: "قرص البيانات",
+      updateStatus: "حالة التحديث",
+      noUpdateAvailable: "محدّث",
+      yes: "نعم",
+      no: "لا",
 },
     ronnyAi: {
       title: "Ronny AI",
@@ -3700,7 +3850,7 @@ const translations = {
       partialCheck: "الفحص متاح جزئيًا",
       noIssues: "لم يتم اكتشاف مشكلات",
       issuesDetected: "تم اكتشاف {count} ملاحظات",
-    
+
       areaSuggestions: "اقتراحات المناطق",
       areaSuggestionsText: "اقتراحات موثوقة مبنية على تعيينات Home Assistant الحالية.",
       noAreaSuggestions: "لا توجد حاليًا اقتراحات مناطق موثوقة.",
@@ -4204,7 +4354,7 @@ const translations = {
       save: "تغيير",
       assignmentUnchanged: "لم يتم تغيير تعيين المنطقة.",
       assignmentFailed: "تعذر تغيير تعيين المنطقة.",
-    
+
       confirmMove: "هل تريد نقل {item} إلى {area}؟",
       confirmRemoveDevice: "هل تريد إزالة تعيين المنطقة من {item}؟",
       confirmAssignEntity: "هل تريد تعيين {item} مباشرةً إلى {area}؟",
@@ -4229,7 +4379,7 @@ const translations = {
 
   tr: {
     navigation: {
-      overview: "Genel Bakış",
+      overview: "Sistem özeti",
       ai: "Ronny AI",
       homeAssistant: "Home Assistant",
       devices: "Cihazlar",
@@ -4278,7 +4428,7 @@ const translations = {
       systemStatusLoading: "Sistem durumu yükleniyor …",
       checkingHomeAssistant: "Home Assistant kontrol ediliyor",
       systemStatusUnavailable: "Sistem durumu yüklenemedi.",
-    
+
       smartHome: "Akıllı Ev",
       entitiesMetric: "Varlıklar",
       devicesMetric: "Cihazlar",
@@ -4298,6 +4448,31 @@ const translations = {
       ronnyAiDescription: "Akıllı sistem kontrolü, hata analizi ve optimizasyon önerileri",
       preparing: "Hazırlanıyor",
       systemStatus: "Sistem durumu",
+      connectionSection: "Bağlantı",
+      networkSection: "Ağ",
+      systemSection: "Sistem",
+      phoenixSection: "Dr. Ronny OS Phoenix",
+      online: "Çevrimiçi",
+      offline: "Çevrimdışı",
+      responseTime: "Yanıt süresi",
+      lastCheck: "Son kontrol",
+      ipAddress: "IP adresi",
+      networkInterface: "Ağ arayüzü",
+      internetAccess: "İnternet erişimi",
+      hostInternet: "Host interneti",
+      supervisorInternet: "Supervisor interneti",
+      supervisor: "Supervisor",
+      homeAssistantOs: "Home Assistant OS",
+      architecture: "Mimari",
+      channel: "Kanal",
+      healthy: "Sağlıklı",
+      supported: "Destekleniyor",
+      bootSlot: "Önyükleme yuvası",
+      dataDisk: "Veri diski",
+      updateStatus: "Güncelleme durumu",
+      noUpdateAvailable: "Güncel",
+      yes: "Evet",
+      no: "Hayır",
 },
     ronnyAi: {
       title: "Ronny AI",
@@ -4393,7 +4568,7 @@ const translations = {
       partialCheck: "Kontrol kısmen kullanılabilir",
       noIssues: "Herhangi bir sorun tespit edilmedi",
       issuesDetected: "{count} uyarı tespit edildi",
-    
+
       areaSuggestions: "Alan önerileri",
       areaSuggestionsText: "Mevcut Home Assistant atamalarından elde edilen güvenilir öneriler.",
       noAreaSuggestions: "Şu anda güvenilir alan önerisi bulunamadı.",
@@ -4897,7 +5072,7 @@ const translations = {
       save: "Değiştir",
       assignmentUnchanged: "Alan ataması değiştirilmedi.",
       assignmentFailed: "Alan ataması değiştirilemedi.",
-    
+
       confirmMove: "{item} gerçekten {area} alanına taşınsın mı?",
       confirmRemoveDevice: "{item} için alan ataması gerçekten kaldırılsın mı?",
       confirmAssignEntity: "{item} doğrudan {area} alanına atansın mı?",
@@ -4922,7 +5097,7 @@ const translations = {
 
   th: {
     navigation: {
-      overview: "ภาพรวม",
+      overview: "ภาพรวมระบบ",
       ai: "Ronny AI",
       homeAssistant: "Home Assistant",
       devices: "อุปกรณ์",
@@ -4971,7 +5146,7 @@ const translations = {
       systemStatusLoading: "กำลังโหลดสถานะระบบ …",
       checkingHomeAssistant: "กำลังตรวจสอบ Home Assistant",
       systemStatusUnavailable: "ไม่สามารถโหลดสถานะระบบได้",
-    
+
       smartHome: "สมาร์ตโฮม",
       entitiesMetric: "เอนทิตี",
       devicesMetric: "อุปกรณ์",
@@ -4991,6 +5166,31 @@ const translations = {
       ronnyAiDescription: "การตรวจสอบระบบอัจฉริยะ การวิเคราะห์ข้อผิดพลาด และคำแนะนำในการปรับปรุง",
       preparing: "กำลังเตรียม",
       systemStatus: "สถานะระบบ",
+      connectionSection: "การเชื่อมต่อ",
+      networkSection: "เครือข่าย",
+      systemSection: "ระบบ",
+      phoenixSection: "Dr. Ronny OS Phoenix",
+      online: "ออนไลน์",
+      offline: "ออฟไลน์",
+      responseTime: "เวลาตอบสนอง",
+      lastCheck: "ตรวจสอบล่าสุด",
+      ipAddress: "ที่อยู่ IP",
+      networkInterface: "อินเทอร์เฟซเครือข่าย",
+      internetAccess: "การเชื่อมต่ออินเทอร์เน็ต",
+      hostInternet: "อินเทอร์เน็ตของโฮสต์",
+      supervisorInternet: "อินเทอร์เน็ตของ Supervisor",
+      supervisor: "Supervisor",
+      homeAssistantOs: "Home Assistant OS",
+      architecture: "สถาปัตยกรรม",
+      channel: "ช่องทาง",
+      healthy: "ปกติ",
+      supported: "รองรับ",
+      bootSlot: "สล็อตบูต",
+      dataDisk: "ดิสก์ข้อมูล",
+      updateStatus: "สถานะการอัปเดต",
+      noUpdateAvailable: "เป็นเวอร์ชันล่าสุด",
+      yes: "ใช่",
+      no: "ไม่",
 },
     ronnyAi: {
       title: "Ronny AI",
@@ -5086,7 +5286,7 @@ const translations = {
       partialCheck: "ตรวจสอบได้เพียงบางส่วน",
       noIssues: "ไม่พบความผิดปกติ",
       issuesDetected: "ตรวจพบข้อสังเกต {count} รายการ",
-    
+
       areaSuggestions: "คำแนะนำพื้นที่",
       areaSuggestionsText: "คำแนะนำที่เชื่อถือได้จากการกำหนดพื้นที่ที่มีอยู่ใน Home Assistant",
       noAreaSuggestions: "ขณะนี้ไม่พบคำแนะนำพื้นที่ที่เชื่อถือได้",
@@ -5590,7 +5790,7 @@ const translations = {
       save: "เปลี่ยน",
       assignmentUnchanged: "ไม่ได้เปลี่ยนการกำหนดพื้นที่",
       assignmentFailed: "ไม่สามารถเปลี่ยนการกำหนดพื้นที่ได้",
-    
+
       confirmMove: "ย้าย {item} ไปยัง {area} หรือไม่?",
       confirmRemoveDevice: "ลบการกำหนดพื้นที่ของ {item} หรือไม่?",
       confirmAssignEntity: "กำหนด {item} ไปยัง {area} โดยตรงหรือไม่?",

@@ -9,9 +9,12 @@ from app.routes.home_assistant import router as home_assistant_router
 from app.routes.order_center import router as order_center_router
 from app.routes.ui import create_ui_router
 from app.services.ui_renderer import render_index
+from app.core.context_manager import ContextManager
 
 APP_DIR = Path(__file__).parent
 WEB_DIR = APP_DIR / "web"
+
+ContextManager.create_structure()
 
 app = FastAPI(title="Dr. Ronny OS Phoenix")
 

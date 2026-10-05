@@ -356,6 +356,24 @@ async function startPhoenixV2() {
     renderNavigation
   );
 
+  // Home-Assistant-Daten bereits laden,
+  // während Phoenix selbst noch startet.
+  import("./api.js")
+    .then(api => {
+      if (
+        typeof api.preloadPhoenixOverviewData
+        === "function"
+      ) {
+        return api.preloadPhoenixOverviewData();
+      }
+    })
+    .catch(error => {
+      console.debug(
+        "[Phoenix V2] Preload übersprungen:",
+        error
+      );
+    });
+
   await initializeRouter();
 
   console.log(

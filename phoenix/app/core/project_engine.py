@@ -29,7 +29,13 @@ class ProjectEngine:
     @staticmethod
     def load_state() -> dict[str, Any]:
         """Lädt den Phoenix-Laufzeitstatus."""
-        return ContextManager.load_json(ContextRegistry.STATE)
+        ContextManager.create_json(
+            ContextRegistry.STATE,
+            {}
+        )
+        return ContextManager.load_json(
+            ContextRegistry.STATE
+        )
 
     @staticmethod
     def summary() -> dict[str, Any]:

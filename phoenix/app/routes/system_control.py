@@ -658,4 +658,3 @@ def phoenix_system_control_delete_ha_backup(
             "deleted": False,
             "error": str(exc),
         }
-

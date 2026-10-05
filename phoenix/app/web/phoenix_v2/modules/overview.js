@@ -274,6 +274,63 @@ export async function renderOverview() {
         }
       }
 
+      .overview-system-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .overview-system-card {
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-medium);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        min-width: 0;
+      }
+
+      .overview-system-card h3 {
+        margin: 0 0 14px;
+        font-size: 1rem;
+      }
+
+      .overview-status-list {
+        display: grid;
+        gap: 9px;
+      }
+
+      .overview-status-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: flex-start;
+      }
+
+      .overview-status-label {
+        opacity: .68;
+        min-width: 0;
+      }
+
+      .overview-status-value {
+        text-align: right;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+      }
+
+      .overview-system-card-wide {
+        grid-column: span 2;
+      }
+
+      @media (max-width: 700px) {
+        .overview-system-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .overview-system-card-wide {
+          grid-column: auto;
+        }
+      }
+
       @media (max-width: 600px) {
         .overview-metrics {
           grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -404,7 +461,7 @@ export async function renderOverview() {
       ${t("overview.systemStatus")}
     </div>
 
-    <section class="card-grid">
+    <section class="card-grid overview-system-grid">
       <article class="card">
         <h3>⏳ ${t("overview.checkingPhoenix")}</h3>
         <p>${t("overview.systemStatusLoading")}</p>
@@ -596,51 +653,13 @@ export async function renderOverview() {
     }
   }
 
-  let phoenixCard = `
-    <article class="card">
-      <h3>❌ ${t("overview.phoenixUnavailable")}</h3>
-      <p>
-        ${t("overview.systemStatusUnavailable")}
-      </p>
+  let systemCards = `
+    <article class="overview-system-card">
+      <h3>❌ ${t("overview.connectionSection")}</h3>
+      <p>${t("overview.haStatusUnavailable")}</p>
     </article>
-  `;
 
-  if (phoenixResult.status === "fulfilled") {
-    const data = phoenixResult.value;
-    const phoenix = data.phoenix || {};
-    const doctor = data.doctor || {};
-
-    const healthy =
-      data.status === "ok" &&
-      doctor.ok === true;
-
-    phoenixCard = `
-      <article class="card">
-        <h3>
-          ${healthy ? "✅" : "⚠️"} Phoenix
-        </h3>
-
-        <p>
-          <strong>
-            ${healthy ? t("overview.systemHealthy") : t("overview.systemCheck")}
-          </strong>
-        </p>
-
-        <p>
-          ${t("overview.version")} ${escapeHtml(phoenix.version || "–")}
-          · ${escapeHtml(phoenix.stage || "–")}
-        </p>
-
-        <p>
-          ${t("overview.doctor")}:
-          ${doctor.ok === true ? "OK" : t("overview.error")}
-        </p>
-      </article>
-    `;
-  }
-
-  let haCard = `
-    <article class="card">
+    <article class="overview-system-card">
       <h3>❌ Home Assistant</h3>
       <p>${t("overview.haStatusUnavailable")}</p>
     </article>
@@ -649,32 +668,329 @@ export async function renderOverview() {
   if (haResult.status === "fulfilled") {
     const data = haResult.value;
     const ha = data.home_assistant || {};
+    const system = data.system || {};
+    const core = system.core || {};
+    const supervisor = system.supervisor || {};
+    const os = system.os || {};
+    const network = system.network || {};
+
     const connected = data.connected === true;
 
-    haCard = `
-      <article class="card">
-        <h3>
-          ${connected ? "✅" : "⚠️"} Home Assistant
-        </h3>
+    const formatBool = value => {
+      if (value === true) {
+        return t("overview.yes");
+      }
 
-        <p>
-          <strong>
-            ${connected ? t("overview.connected") : t("overview.notConnected")}
-          </strong>
-        </p>
+      if (value === false) {
+        return t("overview.no");
+      }
 
-        <p>
-          ${escapeHtml(ha.location_name || "–")}
-          · ${t("overview.version")} ${escapeHtml(ha.version || "–")}
-        </p>
+      return "–";
+    };
 
-        <p>
-          ${escapeHtml(ha.time_zone || "–")}
-        </p>
+    const formatOnline = value => {
+      if (value === true) {
+        return `✅ ${t("overview.online")}`;
+      }
+
+      if (value === false) {
+        return `❌ ${t("overview.offline")}`;
+      }
+
+      return "–";
+    };
+
+    const formatUpdate = value => {
+      if (value === true) {
+        return `⚠️ ${t("homeAssistant.updateAvailable")}`;
+      }
+
+      if (value === false) {
+        return `✅ ${t("overview.noUpdateAvailable")}`;
+      }
+
+      return "–";
+    };
+
+    let checkedAt = "–";
+
+    if (data.checked_at) {
+      try {
+        checkedAt = new Date(
+          data.checked_at
+        ).toLocaleString();
+      } catch {
+        checkedAt = data.checked_at;
+      }
+    }
+
+    const responseTime =
+      data.response_time_ms !== null &&
+      data.response_time_ms !== undefined
+        ? `${escapeHtml(data.response_time_ms)} ms`
+        : "–";
+
+    systemCards = `
+      <article class="overview-system-card">
+        <h3>🔗 ${t("overview.connectionSection")}</h3>
+
+        <div class="overview-status-list">
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("homeAssistant.status")}
+            </span>
+            <span class="overview-status-value">
+              ${formatOnline(connected)}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.responseTime")}
+            </span>
+            <span class="overview-status-value">
+              ${responseTime}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.lastCheck")}
+            </span>
+            <span class="overview-status-value">
+              ${escapeHtml(checkedAt)}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.hostInternet")}
+            </span>
+            <span class="overview-status-value">
+              ${formatOnline(network.host_internet)}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.supervisorInternet")}
+            </span>
+            <span class="overview-status-value">
+              ${formatOnline(network.supervisor_internet)}
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <article class="overview-system-card">
+        <h3>🏠 Home Assistant</h3>
+
+        <div class="overview-status-list">
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.version")}
+            </span>
+            <span class="overview-status-value">
+              ${escapeHtml(ha.version || "–")}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("homeAssistant.location")}
+            </span>
+            <span class="overview-status-value">
+              ${escapeHtml(ha.location_name || "–")}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("homeAssistant.timezone")}
+            </span>
+            <span class="overview-status-value">
+              ${escapeHtml(ha.time_zone || supervisor.timezone || "–")}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.updateStatus")}
+            </span>
+            <span class="overview-status-value">
+              ${formatUpdate(core.update_available)}
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <article class="overview-system-card">
+        <h3>🌐 ${t("overview.networkSection")}</h3>
+
+        <div class="overview-status-list">
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.ipAddress")}
+            </span>
+            <span class="overview-status-value">
+              ${escapeHtml(network.ip_address || "–")}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.networkInterface")}
+            </span>
+            <span class="overview-status-value">
+              ${escapeHtml(network.interface || "–")}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.internetAccess")}
+            </span>
+            <span class="overview-status-value">
+              ${formatOnline(network.connected)}
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <article class="overview-system-card">
+        <h3>⚙️ ${t("overview.systemSection")}</h3>
+
+        <div class="overview-status-list">
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.homeAssistantOs")}
+            </span>
+            <span class="overview-status-value">
+              ${escapeHtml(os.version || "–")}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.supervisor")}
+            </span>
+            <span class="overview-status-value">
+              ${escapeHtml(supervisor.version || "–")}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.architecture")}
+            </span>
+            <span class="overview-status-value">
+              ${escapeHtml(
+                core.architecture ||
+                supervisor.architecture ||
+                "–"
+              )}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.channel")}
+            </span>
+            <span class="overview-status-value">
+              ${escapeHtml(supervisor.channel || "–")}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.healthy")}
+            </span>
+            <span class="overview-status-value">
+              ${formatBool(supervisor.healthy)}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.supported")}
+            </span>
+            <span class="overview-status-value">
+              ${formatBool(supervisor.supported)}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.bootSlot")}
+            </span>
+            <span class="overview-status-value">
+              ${escapeHtml(os.boot || "–")}
+            </span>
+          </div>
+
+          <div class="overview-status-row">
+            <span class="overview-status-label">
+              ${t("overview.updateStatus")}
+            </span>
+            <span class="overview-status-value">
+              ${formatUpdate(os.update_available)}
+            </span>
+          </div>
+        </div>
       </article>
     `;
+
+    if (phoenixResult.status === "fulfilled") {
+      const phoenixData = phoenixResult.value;
+      const phoenix = phoenixData.phoenix || {};
+      const doctor = phoenixData.doctor || {};
+
+      const healthy =
+        phoenixData.status === "ok" &&
+        doctor.ok === true;
+
+      systemCards += `
+        <article class="overview-system-card overview-system-card-wide">
+          <h3>
+            ${healthy ? "✅" : "⚠️"} ${t("overview.phoenixSection")}
+          </h3>
+
+          <div class="overview-status-list">
+            <div class="overview-status-row">
+              <span class="overview-status-label">
+                ${t("overview.version")}
+              </span>
+              <span class="overview-status-value">
+                ${escapeHtml(phoenix.version || "–")}
+              </span>
+            </div>
+
+            <div class="overview-status-row">
+              <span class="overview-status-label">
+                ${t("overview.channel")}
+              </span>
+              <span class="overview-status-value">
+                ${escapeHtml(phoenix.stage || "–")}
+              </span>
+            </div>
+
+            <div class="overview-status-row">
+              <span class="overview-status-label">
+                ${t("overview.doctor")}
+              </span>
+              <span class="overview-status-value">
+                ${
+                  doctor.ok === true
+                    ? "✅ OK"
+                    : `⚠️ ${t("overview.error")}`
+                }
+              </span>
+            </div>
+          </div>
+        </article>
+      `;
+    }
   }
 
-  grid.innerHTML =
-    phoenixCard + haCard;
+  grid.innerHTML = systemCards;
 }
