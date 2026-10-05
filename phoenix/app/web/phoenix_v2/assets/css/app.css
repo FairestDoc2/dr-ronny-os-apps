@@ -1,0 +1,785 @@
+:root {
+  color-scheme: dark;
+
+  --background: #0d1120;
+  --surface: rgba(35, 40, 63, 0.94);
+  --surface-light: rgba(48, 55, 82, 0.94);
+  --surface-hover: rgba(72, 80, 116, 0.72);
+
+  --border: rgba(255, 255, 255, 0.10);
+  --text: #f6f7ff;
+  --text-muted: #aeb6d5;
+
+  --accent: #7c6cff;
+  --accent-secondary: #d852c7;
+
+  --danger: #ff6b81;
+  --success: #54d69a;
+
+  --sidebar-width: 292px;
+  --topbar-height: 64px;
+
+  --radius-small: 12px;
+  --radius-medium: 18px;
+  --radius-large: 28px;
+
+  --shadow:
+    0 18px 55px rgba(0, 0, 0, 0.32);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  color: var(--text);
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(37, 90, 160, 0.35),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(126, 45, 129, 0.30),
+      transparent 35%
+    ),
+    linear-gradient(
+      160deg,
+      #11172b,
+      var(--background)
+    );
+
+  background-attachment: fixed;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid rgba(124, 108, 255, 0.45);
+  outline-offset: 2px;
+}
+
+#phoenix-app {
+  min-height: 100vh;
+}
+
+.topbar {
+  position: fixed;
+  z-index: 1000;
+
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: var(--topbar-height);
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  padding:
+    env(safe-area-inset-top)
+    18px
+    0;
+
+  background: rgba(15, 18, 29, 0.94);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(18px);
+}
+
+.topbar-title {
+  flex: 1;
+
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.icon-button,
+.language-button {
+  min-width: 44px;
+  height: 44px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+
+  background: rgba(255, 255, 255, 0.06);
+
+  cursor: pointer;
+}
+
+.icon-button {
+  font-size: 22px;
+}
+
+.language-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  padding: 0 12px;
+
+  font-weight: 800;
+}
+
+.sidebar {
+  position: fixed;
+  z-index: 900;
+
+  top: var(--topbar-height);
+  bottom: 0;
+  left: 0;
+
+  width: var(--sidebar-width);
+
+  padding: 22px 16px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow-y: auto;
+
+  background: rgba(18, 22, 36, 0.94);
+  border-right: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 12px;
+  margin-bottom: 20px;
+}
+
+.brand-avatar {
+  width: 58px;
+  height: 58px;
+
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 auto;
+
+  font-size: 30px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(66, 165, 245, 0.36),
+      rgba(216, 82, 199, 0.40)
+    );
+
+  border: 2px solid rgba(255, 255, 255, 0.17);
+}
+
+.brand h1 {
+  margin: 0;
+
+  font-size: 20px;
+}
+
+.brand p {
+  margin: 4px 0 0;
+
+  color: var(--text-muted);
+}
+
+.navigation {
+  display: grid;
+  gap: 8px;
+}
+
+.nav-button {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  padding: 14px;
+
+  border: 1px solid transparent;
+  border-radius: var(--radius-small);
+
+  background: transparent;
+
+  color: var(--text-muted);
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 160ms ease,
+    border 160ms ease,
+    color 160ms ease;
+}
+
+.nav-button:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-button.active {
+  color: white;
+
+  background:
+    linear-gradient(
+      120deg,
+      rgba(69, 117, 194, 0.46),
+      rgba(139, 65, 155, 0.42)
+    );
+
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.nav-icon {
+  width: 28px;
+
+  font-size: 23px;
+  text-align: center;
+}
+
+.nav-label {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 18px 12px 4px;
+
+  display: grid;
+  gap: 5px;
+
+  color: var(--text-muted);
+
+  font-size: 13px;
+}
+
+.main-content {
+  min-height: 100vh;
+
+  padding:
+    calc(var(--topbar-height) + 24px)
+    24px
+    32px
+    calc(var(--sidebar-width) + 24px);
+}
+
+.page-content {
+  width: min(100%, 1500px);
+  margin: 0 auto;
+}
+
+.page-header {
+  padding: 28px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-large);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(69, 117, 194, 0.30),
+      rgba(139, 65, 155, 0.28)
+    );
+
+  box-shadow: var(--shadow);
+}
+
+.page-header h2 {
+  margin: 0;
+
+  font-size: clamp(32px, 5vw, 58px);
+  line-height: 1.05;
+}
+
+.page-header p {
+  max-width: 900px;
+
+  margin: 14px 0 0;
+
+  color: var(--text-muted);
+
+  font-size: clamp(17px, 2vw, 23px);
+  line-height: 1.45;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(210px, 1fr)
+    );
+
+  gap: 16px;
+
+  margin-top: 22px;
+}
+
+.card,
+.stat-card,
+.loading-card,
+.error-card,
+.empty-card {
+  padding: 22px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-medium);
+
+  background: var(--surface);
+
+  box-shadow: var(--shadow);
+}
+
+.stat-card strong {
+  display: block;
+
+  font-size: 38px;
+}
+
+.stat-card span {
+  display: block;
+
+  margin-top: 6px;
+
+  color: var(--text-muted);
+}
+
+.module-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+
+  margin-top: 22px;
+}
+
+.search-input {
+  flex: 1 1 300px;
+
+  min-height: 50px;
+
+  padding: 0 17px;
+
+  color: var(--text);
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+}
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-button {
+  min-height: 46px;
+
+  padding: 0 17px;
+
+  border: 1px solid var(--border);
+  border-radius: 999px;
+
+  background: var(--surface);
+
+  cursor: pointer;
+}
+
+.filter-button.active {
+  background:
+    linear-gradient(
+      120deg,
+      rgba(69, 117, 194, 0.56),
+      rgba(139, 65, 155, 0.52)
+    );
+}
+
+.label-card {
+  cursor: pointer;
+}
+
+.label-card:hover {
+  background: var(--surface-hover);
+}
+
+.label-card h3 {
+  margin: 0 0 10px;
+
+  font-size: 20px;
+}
+
+.label-meta {
+  color: var(--text-muted);
+}
+
+.label-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  margin-top: 16px;
+}
+
+.label-stat {
+  padding: 12px;
+
+  background: rgba(255, 255, 255, 0.045);
+  border-radius: 10px;
+}
+
+.label-stat strong,
+.label-stat span {
+  display: block;
+}
+
+.label-stat span {
+  margin-top: 3px;
+
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.language-menu {
+  position: fixed;
+  z-index: 2000;
+
+  top: calc(var(--topbar-height) + 8px);
+  right: 16px;
+
+  width: 190px;
+
+  padding: 8px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-medium);
+
+  background: rgba(23, 27, 43, 0.99);
+  box-shadow: var(--shadow);
+}
+
+.language-menu button {
+  width: 100%;
+
+  padding: 12px;
+
+  border: 0;
+  border-radius: 10px;
+
+  background: transparent;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.language-menu button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.drawer-overlay {
+  display: none;
+}
+
+.error-card {
+  color: #ffd6dc;
+  border-color: rgba(255, 107, 129, 0.35);
+}
+
+.empty-card {
+  color: var(--text-muted);
+}
+
+/* Keep technical identifiers readable inside RTL languages. */
+.technical-value {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+}
+
+/* Emoji flag rendering for the active language selector. */
+#languageFlag {
+  font-family:
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Noto Color Emoji",
+    sans-serif;
+  font-style: normal;
+  font-variant-emoji: emoji;
+  line-height: 1;
+}
+
+/* Local SVG flags: reliable across Home Assistant WebViews. */
+.language-flag {
+  width: 24px;
+  height: 16px;
+  flex: 0 0 auto;
+  display: inline-block;
+  object-fit: cover;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+
+.language-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+/* Phoenix Area CRUD */
+
+.area-management-card {
+  margin-bottom: 1rem;
+}
+
+.area-create-control {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.area-create-input {
+  flex: 1 1 240px;
+  min-width: 0;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border-color, rgba(255,255,255,0.15));
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  color: inherit;
+  font: inherit;
+}
+
+.area-create-input:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.area-create-button,
+.area-rename-button,
+.area-delete-button {
+  cursor: pointer;
+  border: 1px solid var(--border-color, rgba(255,255,255,0.15));
+  border-radius: 10px;
+  background: rgba(255,255,255,0.08);
+  color: inherit;
+  font: inherit;
+}
+
+.area-create-button {
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+}
+
+.area-rename-button,
+.area-delete-button {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.area-create-button:hover,
+.area-rename-button:hover,
+.area-delete-button:hover {
+  background: rgba(255,255,255,0.14);
+}
+
+.area-create-button:disabled,
+.area-rename-button:disabled,
+.area-delete-button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.area-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.area-card-header h3 {
+  margin-top: 0;
+}
+
+.area-card-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.area-management-message {
+  margin-top: 0.75rem;
+  min-height: 1.2em;
+}
+
+.area-management-message.error {
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .area-create-control {
+    align-items: stretch;
+  }
+
+  .area-create-input,
+  .area-create-button {
+    width: 100%;
+  }
+}
+
+.brand-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+/* Phoenix Home Assistant Dashboard */
+
+.ha-dashboard {
+  max-height:
+    calc(
+      100vh -
+      var(--topbar-height) -
+      36px
+    );
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-right: 8px;
+  padding-bottom: 28px;
+
+  scrollbar-width: thin;
+}
+
+.ha-dashboard::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ha-dashboard::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--border);
+}
+
+.ha-section {
+  margin-top: 22px;
+}
+
+.ha-section h3 {
+  margin: 0 0 10px;
+
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.ha-card-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(155px, 1fr)
+    );
+
+  gap: 10px;
+}
+
+.ha-stat-card {
+  min-width: 0;
+
+  padding: 13px 15px;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.ha-stat-card strong {
+  display: block;
+
+  overflow-wrap: anywhere;
+
+  font-size: 21px;
+  line-height: 1.2;
+}
+
+.ha-stat-card span {
+  display: block;
+
+  margin-top: 5px;
+
+  color: var(--text-muted);
+
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.ha-stat-card.technical-value strong,
+.ha-stat-card .technical-value {
+  font-size: 17px;
+}
+
+.ha-wide-value strong {
+  font-size: 14px;
+  word-break: break-all;
+}
+
+@media (max-width: 700px) {
+  .ha-card-grid {
+    grid-template-columns:
+      repeat(
+        auto-fit,
+        minmax(135px, 1fr)
+      );
+  }
+
+  .ha-stat-card {
+    padding: 11px 12px;
+  }
+
+  .ha-stat-card strong {
+    font-size: 18px;
+  }
+}
+

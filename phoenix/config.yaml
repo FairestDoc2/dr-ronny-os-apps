@@ -1,0 +1,41 @@
+name: "Dr. Ronny OS Phoenix"
+version: "1.0.24"
+stage: stable
+slug: "ronny_phoenix"
+description: "Smart-Home Control Center für Home Assistant mit KI, Verwaltung, Automationen, Skripten und Sicherungen"
+
+startup: services
+boot: auto
+init: false
+
+arch:
+  - amd64
+
+hassio_api: true
+homeassistant_api: true
+auth_api: true
+hassio_role: admin
+
+ingress: true
+ingress_port: 8099
+ingress_entry: /
+
+panel_icon: mdi:brain
+panel_title: "Dr. Ronny OS"
+
+webui: "http://[HOST]:[PORT:8099]/"
+
+ports:
+  8099/tcp: 8099
+
+ports_description:
+  8099/tcp: "Dr. Ronny OS Web UI"
+
+map:
+  - config:rw
+
+options: {}
+
+schema: {}
+
+

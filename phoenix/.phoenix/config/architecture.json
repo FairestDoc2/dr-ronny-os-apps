@@ -1,0 +1,57 @@
+{
+  "architecture": {
+    "name": "Phoenix Development System",
+    "short_name": "PDS",
+    "version": "1.0",
+    "locked": true,
+    "description": "Architecture definition for Dr. Ronny OS Phoenix."
+  },
+  "principles": {
+    "single_source_of_truth": true,
+    "one_task_one_file_one_test_one_commit": true,
+    "no_duplicate_information": true,
+    "architecture_locked": true,
+    "central_cli": true
+  },
+  "cli": {
+    "entrypoint": "tools/phoenix.py",
+    "commands": [
+      "start",
+      "next",
+      "finish",
+      "status",
+      "resume",
+      "context",
+      "roadmap",
+      "doctor",
+      "version",
+      "backup",
+      "release",
+      "think"
+    ]
+  },
+  "context": {
+    "config_root": ".phoenix/config",
+    "runtime_root": ".phoenix/runtime",
+    "generated_root": ".phoenix/generated",
+    "config_files": [
+      "project.json",
+      "architecture.json",
+      "roadmap.json",
+      "modules.json"
+    ],
+    "runtime_files": [
+      "state.json",
+      "git.json",
+      "build.json",
+      "history.json"
+    ],
+    "generated_files": [
+      "context.md"
+    ]
+  },
+  "generation": {
+    "automatic": true,
+    "manual_edit_allowed": false
+  }
+}

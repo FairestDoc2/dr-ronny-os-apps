@@ -1,0 +1,146 @@
+/* =========================================================
+   Dr. Ronny OS Phoenix – zentrales Theme
+   Tablet-Querformat und Order Center
+   ========================================================= */
+
+/* Allgemeine Order-Center-Karten */
+.order-center .order-hero,
+.order-center .order-stat,
+.order-center .order-card,
+.order-center .order-side,
+.order-center .order-panel {
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 22px;
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* Überschrift nicht mehr riesig */
+.order-center .order-hero h2 {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.order-center .order-hero p {
+  margin: 12px 0 0;
+  font-size: clamp(16px, 1.7vw, 22px);
+  line-height: 1.45;
+}
+
+/* Lange Ergebnisliste mit eigenem Scrollbereich */
+.order-center .order-grid {
+  max-height: 56vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  align-content: start;
+  padding-right: 8px;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color:
+    rgba(255, 255, 255, 0.30)
+    rgba(255, 255, 255, 0.04);
+}
+
+.order-center .order-grid::-webkit-scrollbar {
+  width: 7px;
+}
+
+.order-center .order-grid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+}
+
+.order-center .order-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+}
+
+/* =========================================================
+   Tablet im Querformat
+   ========================================================= */
+@media
+  (min-width: 700px)
+  and (max-width: 1400px)
+  and (orientation: landscape) {
+
+  .order-center {
+    gap: 14px;
+  }
+
+  .order-center .order-hero {
+    padding: 22px 26px;
+    min-height: 0;
+  }
+
+  .order-center .order-hero h2 {
+    font-size: clamp(30px, 3.5vw, 46px);
+    line-height: 1.05;
+  }
+
+  .order-center .order-hero p {
+    margin-top: 8px;
+    font-size: 17px;
+  }
+
+  .order-center .order-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .order-center .order-stat {
+    padding: 16px 18px;
+    min-height: 92px;
+  }
+
+  .order-center .order-stat b {
+    font-size: clamp(28px, 3vw, 42px);
+  }
+
+  .order-center .order-tools {
+    gap: 8px;
+  }
+
+  .order-center .order-tab,
+  .order-center .order-filter,
+  .order-center .order-btn {
+    min-height: 48px;
+    padding: 10px 15px;
+    font-size: 15px;
+  }
+
+  .order-center .order-search {
+    min-height: 48px;
+    font-size: 15px;
+  }
+
+  .order-center .order-grid {
+    max-height: 47vh;
+  }
+
+  .order-center .order-card {
+    padding: 14px;
+  }
+}
+
+/* Handy */
+@media (max-width: 699px) {
+  .order-center .order-hero {
+    padding: 20px;
+  }
+
+  .order-center .order-hero h2 {
+    font-size: clamp(34px, 11vw, 54px);
+  }
+
+  .order-center .order-grid {
+    max-height: 52vh;
+    padding-right: 5px;
+  }
+}

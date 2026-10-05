@@ -1,0 +1,29 @@
+# Betrieb / Entwicklung
+backups/
+logs/
+_archive/
+updates/
+tests/
+tools/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Sicherungsdateien
+*.bak
+*.backup
+*_backup*
+*.rebuild_backup
+*bak_before*
+
+# lokale Entwicklerdaten
+.owner_installation
+.developer_mode
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

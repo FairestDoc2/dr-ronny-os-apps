@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+
+  <meta
+    name="theme-color"
+    content="#15192a"
+  >
+
+  <title>Dr. Ronny OS – Smart Home Control Center</title>
+
+  <link
+    rel="stylesheet"
+    href="phoenix_v2/assets/css/app.css?v=20260928-1050"
+  >
+
+  <link
+    rel="stylesheet"
+    href="phoenix_v2/assets/css/responsive.css?v=20260928-1050"
+  >
+</head>
+
+<body>
+<div id="phoenix-app">
+
+    <header class="topbar">
+      <button
+        id="menuButton"
+        class="icon-button"
+        type="button"
+        aria-label="Menü öffnen"
+      >
+        ☰
+      </button>
+
+      <div class="topbar-title">
+        Dr. Ronny OS
+      </div>
+
+      <button
+        id="languageButton"
+        class="language-button"
+        type="button"
+        aria-label="Sprache auswählen"
+      >
+        <img
+          id="languageFlag"
+          class="language-flag"
+          src="phoenix_v2/assets/flags/de.svg"
+          alt=""
+          aria-hidden="true"
+        >
+        <span id="languageCode">DE</span>
+      </button>
+    </header>
+
+    <div
+      id="drawerOverlay"
+      class="drawer-overlay"
+    ></div>
+
+    <aside
+      id="sidebar"
+      class="sidebar"
+    >
+      <div class="brand">
+        <div class="brand-avatar">
+          <img
+            src="/local/avatar.png"
+            alt="Dr. Ronny OS"
+          >
+        </div>
+
+        <div>
+          <h1>Dr. Ronny OS</h1>
+          <p>Smart Home Control Center</p>
+        </div>
+      </div>
+
+      <nav
+        id="mainNavigation"
+        class="navigation"
+      ></nav>
+
+      <div class="sidebar-footer">
+        <span id="systemLanguage">
+          Sprache: de
+        </span>
+
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div
+        id="pageContent"
+        class="page-content"
+      >
+        <div class="loading-card">
+          Phoenix V2 wird geladen …
+        </div>
+      </div>
+    </main>
+
+    <div
+      id="languageMenu"
+      class="language-menu"
+      hidden
+    >
+      <button
+        type="button"
+        data-language="de"
+      >
+        <img class="language-flag" src="phoenix_v2/assets/flags/de.svg" alt=""> Deutsch
+      </button>
+
+      <button
+        type="button"
+        data-language="en"
+      >
+        <img class="language-flag" src="phoenix_v2/assets/flags/gb.svg" alt=""> English
+      </button>
+
+      <button
+        type="button"
+        data-language="ru"
+      >
+        <img class="language-flag" src="phoenix_v2/assets/flags/ru.svg" alt=""> Русский
+      </button>
+
+      <button
+        type="button"
+        data-language="it"
+      >
+        <img class="language-flag" src="phoenix_v2/assets/flags/it.svg" alt=""> Italiano
+      </button>
+
+      <button
+        type="button"
+        data-language="es"
+      >
+        <img class="language-flag" src="phoenix_v2/assets/flags/es.svg" alt=""> Español
+      </button>
+
+      <button
+        type="button"
+        data-language="ar"
+      >
+        <img class="language-flag" src="phoenix_v2/assets/flags/sa.svg" alt=""> العربية
+      </button>
+
+      <button
+        type="button"
+        data-language="tr"
+      >
+        <img class="language-flag" src="phoenix_v2/assets/flags/tr.svg" alt=""> Türkçe
+      </button>
+
+      <button
+        type="button"
+        data-language="th"
+      >
+        <img class="language-flag" src="phoenix_v2/assets/flags/th.svg" alt=""> ไทย
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    window.addEventListener("error", function (event) {
+      const target = document.getElementById("pageContent");
+      if (!target) return;
+
+      target.innerHTML =
+        '<div class="error-card">' +
+        '<strong>Phoenix JavaScript-Fehler</strong><br><br>' +
+        String(event.message || "Unbekannter Fehler") +
+        '<br><br><small>' +
+        String(event.filename || "") +
+        ':' + String(event.lineno || "") +
+        ':' + String(event.colno || "") +
+        '</small></div>';
+    });
+
+    window.addEventListener("unhandledrejection", function (event) {
+      const target = document.getElementById("pageContent");
+      if (!target) return;
+
+      const reason = event.reason;
+      target.innerHTML =
+        '<div class="error-card">' +
+        '<strong>Phoenix Promise-Fehler</strong><br><br>' +
+        String(reason?.message || reason || "Unbekannter Fehler") +
+        '</div>';
+    });
+  </script>
+
+  <script
+    type="module"
+    src="phoenix_v2/core/app.js?v=20260929-0636"
+  ></script>
+</body>
+</html>

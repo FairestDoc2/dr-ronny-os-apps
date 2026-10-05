@@ -1,0 +1,6 @@
+{
+  "project": "dr-ronny-os-phoenix",
+  "type": "home-assistant-addon",
+  "foundation": true,
+  "pds": true
+}

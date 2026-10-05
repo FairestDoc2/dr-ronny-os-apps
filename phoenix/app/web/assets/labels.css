@@ -1,0 +1,13 @@
+.labels-page{padding:24px}
+.labels-kicker{color:#8aa4ff;font-size:12px;letter-spacing:2px;font-weight:700}
+.labels-hero h1{font-size:42px;margin:8px 0}
+.labels-hero p{opacity:.8}
+.labels-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}
+.label-stat,.labels-details,.label-card{background:rgba(255,255,255,.05);border-radius:18px;padding:20px}
+.label-stat strong{display:block;font-size:34px}
+.labels-toolbar{display:flex;gap:12px;margin:20px 0}
+.labels-toolbar input,.labels-toolbar select{padding:12px;border-radius:12px;border:none;background:#222b45;color:white}
+.labels-toolbar input{flex:1}
+.labels-content{display:grid;grid-template-columns:2fr 1fr;gap:24px}
+.labels-grid{display:grid;gap:16px}
+@media(max-width:900px){.labels-stats,.labels-content{grid-template-columns:1fr}.labels-toolbar{flex-direction:column}}

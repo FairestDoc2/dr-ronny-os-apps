@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dr. Ronny OS Phoenix</title>
+<style>
+:root{
+  --bg:#070b16;
+  --card:rgba(255,255,255,.09);
+  --card2:rgba(255,255,255,.14);
+  --line:rgba(255,255,255,.14);
+  --text:#f6f8ff;
+  --muted:#a7b1cc;
+  --blue:#6ea8ff;
+  --pink:#ff5fd2;
+  --green:#4ff0a8;
+  --orange:#ffb45f;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text)}
+body{
+  background:
+    radial-gradient(circle at 12% 0%,rgba(110,168,255,.32),transparent 32%),
+    radial-gradient(circle at 88% 10%,rgba(255,95,210,.20),transparent 28%),
+    linear-gradient(135deg,#050814,#0a1024 55%,#050814);
+}
+button{font:inherit;color:var(--text)}
+.app{
+  width:min(1500px,100%);
+  margin:auto;
+  padding:18px;
+  display:grid;
+  grid-template-columns:280px 1fr;
+  gap:18px;
+}
+.glass{
+  background:linear-gradient(145deg,var(--card2),rgba(255,255,255,.055));
+  border:1px solid var(--line);
+  border-radius:28px;
+  box-shadow:0 24px 70px rgba(0,0,0,.38);
+  backdrop-filter:blur(18px);
+}
+.sidebar{min-height:calc(100vh - 36px);padding:18px;position:sticky;top:18px}
+.profile{display:flex;align-items:center;gap:13px;margin-bottom:20px}
+.avatar{
+  width:58px;height:58px;border-radius:20px;object-fit:cover;
+  border:1px solid var(--line);background:rgba(255,255,255,.12)
+}
+.profile b{display:block;font-size:18px}
+.profile span{display:block;color:var(--muted);font-size:13px;margin-top:3px}
+.nav{display:grid;gap:9px}
+.nav button,.top-actions button,.quick button,.ai button{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.07);
+  border-radius:17px;
+  padding:12px 14px;
+  cursor:pointer;
+}
+.nav button{text-align:left}
+.nav button.active,.nav button:hover,.top-actions button:hover,.quick button:hover,.ai button:hover{
+  background:linear-gradient(135deg,rgba(110,168,255,.32),rgba(255,95,210,.18));
+}
+.main{min-width:0}
+.topbar{
+  height:82px;
+  padding:16px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+}
+.kicker{
+  margin:0 0 4px;
+  color:var(--blue);
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:12px;
+  font-weight:800;
+}
+.topbar h2{margin:0;font-size:26px}
+.top-actions{display:flex;align-items:center;gap:9px}
+.lang{width:48px;height:44px;display:grid;place-items:center;padding:0}
+.flag-de{
+  width:28px;height:19px;border-radius:4px;display:block;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(255,255,255,.25);
+  background:linear-gradient(to bottom,#000 0 33.33%,#dd0000 33.33% 66.66%,#ffce00 66.66% 100%);
+}
+.hero{
+  padding:34px;
+  display:block;
+  margin-bottom:18px;
+  overflow:hidden;
+}
+.hero h1{font-size:clamp(34px,5vw,68px);line-height:1;margin:8px 0 10px}
+.hero p{color:var(--muted);font-size:20px;margin:0}
+.hero-avatar{
+  width:132px;height:132px;border-radius:36px;object-fit:cover;
+  border:1px solid var(--line);background:rgba(255,255,255,.1);
+}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
+.fact{padding:15px;border-radius:22px;background:rgba(0,0,0,.22);border:1px solid var(--line)}
+.fact span,.fact b,.fact em{display:block}
+.fact em{font-style:normal;color:var(--muted);margin-top:3px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:18px}
+.card,.panel{padding:22px}
+.card span{font-size:28px}
+.card h3,.panel h3{margin:10px 0 6px}
+.card p,.panel p{color:var(--muted);margin:0}
+.dashboard{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+.quick{display:flex;flex-wrap:wrap;gap:10px}
+.ai{
+  background:
+    radial-gradient(circle at top right,rgba(110,168,255,.22),transparent 35%),
+    linear-gradient(145deg,var(--card2),rgba(255,255,255,.055));
+}
+.ai-bubble{
+  margin:14px 0;
+  padding:16px;
+  border-radius:20px;
+  background:rgba(0,0,0,.22);
+  border:1px solid var(--line);
+  color:#dfe7ff;
+}
+.timeline{display:grid;gap:10px;margin-top:12px}
+.event{display:grid;grid-template-columns:58px 1fr;gap:10px;color:var(--muted)}
+.event b{color:var(--blue)}
+.health{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.ring{
+  aspect-ratio:1;border-radius:999px;border:1px solid var(--line);
+  display:grid;place-items:center;text-align:center;background:rgba(0,0,0,.18);
+  font-weight:800;
+}
+.ring span{display:block;font-size:12px;color:var(--muted)}
+.footer{margin-top:18px;text-align:center;color:var(--muted);font-size:12px}
+
+@media(max-width:950px){
+  .app{display:block;padding:12px}
+  .sidebar{position:relative;top:0;min-height:auto;margin-bottom:12px}
+  .nav{grid-template-columns:repeat(3,1fr)}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .dashboard{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .app{padding:10px}
+  .glass{border-radius:22px}
+  .sidebar{padding:14px}
+  .profile{margin-bottom:14px}
+  .avatar{width:62px;height:62px;border-radius:20px}
+  .nav{display:flex;overflow-x:auto;gap:8px;padding-bottom:4px}
+  .nav button{white-space:nowrap;padding:10px 12px;font-size:14px}
+  .topbar{height:auto;padding:14px}
+  .topbar h2{font-size:20px}
+  .top-actions button span{display:none}
+  .hero{grid-template-columns:1fr;padding:22px}
+  .hero-avatar{width:92px;height:92px;border-radius:26px}
+  .hero h1{font-size:34px}
+  .hero p{font-size:16px}
+  .facts,.cards{grid-template-columns:1fr}
+  .dashboard{gap:12px}
+  .card,.panel{padding:18px}
+  .health{grid-template-columns:repeat(3,minmax(80px,1fr));overflow-x:auto}
+}
+
+.lang-menu{position:relative}
+.lang-menu summary{
+  list-style:none;
+  width:48px;
+  height:44px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.07);
+  border-radius:17px;
+  cursor:pointer;
+}
+.lang-menu summary::-webkit-details-marker{display:none}
+.lang-list{
+  position:absolute;
+  right:0;
+  top:54px;
+  min-width:190px;
+  padding:10px;
+  border-radius:20px;
+  background:rgba(10,15,32,.96);
+  border:1px solid var(--line);
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+  backdrop-filter:blur(18px);
+  z-index:20;
+}
+.lang-list button{
+  width:100%;
+  text-align:left;
+  margin:3px 0;
+}
+.badge{
+  display:inline-grid;
+  place-items:center;
+  min-width:20px;
+  height:20px;
+  margin-left:6px;
+  border-radius:999px;
+  background:rgba(255,95,210,.85);
+  font-size:12px;
+  font-weight:800;
+}
+
+
+.topbar{
+  position:relative;
+  z-index:100;
+  overflow:visible;
+}
+
+.top-actions{
+  position:relative;
+  z-index:120;
+}
+
+.lang-menu{
+  position:relative;
+  z-index:200;
+}
+
+.lang-list{
+  z-index:9999;
+}
+
+
+.flag{
+  width:28px;
+  height:19px;
+  border-radius:4px;
+  display:inline-block;
+  overflow:hidden;
+  vertical-align:middle;
+  margin-right:8px;
+  box-shadow:0 0 0 1px rgba(255,255,255,.25);
+}
+.flag-de{background:linear-gradient(to bottom,#000 0 33.33%,#dd0000 33.33% 66.66%,#ffce00 66.66% 100%)}
+
+.flag-es{background:linear-gradient(to bottom,#aa151b 0 25%,#f1bf00 25% 75%,#aa151b 75% 100%)}
+.flag-fr{background:linear-gradient(to right,#0055a4 0 33.33%,#fff 33.33% 66.66%,#ef4135 66.66% 100%)}
+.flag-it{background:linear-gradient(to right,#009246 0 33.33%,#fff 33.33% 66.66%,#ce2b37 66.66% 100%)}
+.flag-pl{background:linear-gradient(to bottom,#fff 0 50%,#dc143c 50% 100%)}
+.flag-ru{background:linear-gradient(to bottom,#fff 0 33.33%,#0039a6 33.33% 66.66%,#d52b1e 66.66% 100%)}
+.flag-th{background:linear-gradient(to bottom,#a51931 0 16.6%,#fff 16.6% 33.2%,#2d2a4a 33.2% 66.4%,#fff 66.4% 83%,#a51931 83% 100%)}
+
+.lang-menu summary .flag{margin-right:0}
+.lang-list button{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+
+.inventory-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.inventory-grid button{
+  text-align:left;
+  min-height:76px;
+}
+
+.inventory-grid b{
+  display:block;
+  font-size:24px;
+  line-height:1;
+  margin-bottom:7px;
+}
+
+.inventory-grid span{
+  display:block;
+  color:var(--muted);
+  font-size:13px;
+}
+
+@media(max-width:560px){
+  .inventory-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+
+.flag-gb{
+  background:
+    linear-gradient(33deg,transparent 42%,#fff 42% 48%,#c8102e 48% 52%,#fff 52% 58%,transparent 58%),
+    linear-gradient(-33deg,transparent 42%,#fff 42% 48%,#c8102e 48% 52%,#fff 52% 58%,transparent 58%),
+    linear-gradient(to right,transparent 38%,#fff 38% 45%,#c8102e 45% 55%,#fff 55% 62%,transparent 62%),
+    linear-gradient(to bottom,transparent 35%,#fff 35% 43%,#c8102e 43% 57%,#fff 57% 65%,transparent 65%),
+    #012169;
+}
+
+.flag-sa{
+  background:
+    linear-gradient(to bottom,#006c35 0 100%);
+  position:relative;
+}
+.flag-sa:after{
+  content:"";
+  position:absolute;
+  left:6px;
+  right:6px;
+  bottom:5px;
+  height:2px;
+  background:#fff;
+  border-radius:2px;
+}
+.flag-sa:before{
+  content:"";
+  position:absolute;
+  left:8px;
+  right:8px;
+  top:7px;
+  height:2px;
+  background:#fff;
+  opacity:.9;
+  border-radius:2px;
+}
+
+
+.delivery-badge{
+  position:fixed;
+  top:12px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:99999;
+  padding:8px 14px;
+  border-radius:999px;
+  background:rgba(255,180,95,.18);
+  border:1px solid rgba(255,180,95,.45);
+  color:#ffd9a8;
+  font-weight:800;
+  font-size:13px;
+  backdrop-filter:blur(14px);
+  box-shadow:0 12px 35px rgba(0,0,0,.35);
+}
+
+
+/* Delivery Fix: Sprachmenü immer vorne */
+.topbar,
+.top,
+.top-actions,
+.lang-menu{
+  position:relative !important;
+  overflow:visible !important;
+}
+
+.topbar,
+.top{
+  z-index:5000 !important;
+}
+
+.top-actions{
+  z-index:6000 !important;
+}
+
+.lang-menu{
+  z-index:7000 !important;
+}
+
+.lang-list{
+  z-index:99999 !important;
+  position:absolute !important;
+  right:0 !important;
+  top:54px !important;
+}
+
+</style>
+</head>
+<body>
+<div class="delivery-badge">🚧 Phoenix Delivery Preview</div>
+<div class="app">
+
+  <aside class="sidebar glass">
+    <div class="profile">
+      <img class="avatar" src="/local/avatar.png?v=3" alt="Avatar">
+      <div>
+        <b>Dr. Ronny OS</b>
+        <span>Phoenix 0.6.3</span>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button onclick="location.href='/'">🏠 Stable Dashboard</button>
+      <button class="active">🚧 Delivery Lab</button>
+      <button>🧪 Dashboard Next</button>
+      <button>🌍 Language Studio</button>
+      <button>🎨 Theme Studio</button>
+      <button>🧩 Components</button>
+      <button>📱 Responsive Test</button>
+      <button>🐞 Debug Console</button>
+      <button>📝 Changelog</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar glass">
+      <div>
+        <p class="kicker">Premium Dashboard</p>
+        <h2>Übersicht</h2>
+      </div>
+      <div class="top-actions">
+        <button>🔍 <span>Suchen</span></button>
+
+        <details class="lang-menu">
+          <summary title="Sprache"><span id="currentLangFlag" class="flag flag-de"></span></summary>
+          <div class="lang-list">
+            <button data-lang="de"><span class="flag flag-de"></span>Deutsch</button>
+            <button data-lang="en"><span class="flag flag-gb"></span>English</button>
+            <button data-lang="es"><span class="flag flag-es"></span>Español</button>
+            <button data-lang="fr"><span class="flag flag-fr"></span>Français</button>
+            <button data-lang="it"><span class="flag flag-it"></span>Italiano</button>
+            <button data-lang="pl"><span class="flag flag-pl"></span>Polski</button>
+            <button data-lang="ru"><span class="flag flag-ru"></span>Русский</button>
+            <button data-lang="th"><span class="flag flag-th"></span>ไทย</button>
+            <button data-lang="ar"><span class="flag flag-sa"></span>العربية</button>
+          </div>
+        </details>
+
+        <button title="Design">🌙</button>
+        <button title="Benachrichtigungen">🔔<span class="badge">3</span></button>
+      </div>
+    </header>
+
+    <section class="hero glass">
+      <div>
+        <p class="kicker">Phoenix 1.0 Design</p>
+        <h1 id="phoenixGreeting">Guten Tag, Ronny 👋</h1>
+        <p>Dein Smart Home läuft stabil. Phoenix ist bereit.</p>
+
+        <div class="facts">
+          <div class="fact"><span>🕒</span><b data-i18n="time">Uhrzeit</b><em id="phoenixTime">--:--</em></div>
+          <div class="fact"><span>📅</span><b data-i18n="today">Heute</b><em id="phoenixDate">wird geladen</em></div>
+          <div class="fact"><span id="weatherFactIcon">🌤️</span><b data-i18n="weather">Wetter</b><em id="weatherDetails">wird geladen</em></div>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="cards">
+      <div class="card glass"><span>🏠</span><h3>Home Assistant</h3><p>online</p></div>
+      <div class="card glass"><span>🧠</span><h3>Ronny AI</h3><p>bereit</p></div>
+      <div class="card glass"><span>❤️</span><h3>System</h3><p>gesund</p></div>
+      <div class="card glass"><span>📡</span><h3>Geräte</h3><p>im Blick</p></div>
+    </section>
+
+    <section class="dashboard">
+      <div class="panel glass">
+        <h3>🧠 Phoenix Core</h3><p>Dein komplettes Smart Home auf einen Blick.</p>
+        <div class="quick inventory-grid">
+          <button><b>3400</b><span data-i18n="entities">Entitäten</span></button>
+          <button><b>47</b><span data-i18n="automations">Automationen</span></button>
+          <button><b>40</b><span data-i18n="areas">Bereiche</span></button>
+          <button><b>498</b><span data-i18n="labels">Labels</span></button>
+          <button><b>126</b><span data-i18n="devices">Geräte</span></button>
+          <button><b>32</b><span data-i18n="integrations">Integrationen</span></button>
+          <button><b>18</b><span data-i18n="scripts">Skripte</span></button>
+          <button><b>12</b><span data-i18n="scenes">Szenen</span></button>
+        </div>
+      </div>
+
+      <div class="panel glass ai">
+        <h3>🧠 Ronny AI</h3>
+        <div class="ai-bubble">
+          Guten Tag Ronny. Alle Systeme laufen stabil. Keine kritischen Warnungen erkannt.
+        </div>
+        <button>Frage stellen ✨</button>
+      </div>
+
+      <div class="panel glass">
+        <h3>🕘 Aktivitäten</h3>
+        <div class="timeline">
+          <div class="event"><b>08:10</b><span>Phoenix gestartet</span></div>
+          <div class="event"><b>08:20</b><span>Dashboard geladen</span></div>
+          <div class="event"><b>08:30</b><span>System stabil</span></div>
+        </div>
+      </div>
+
+      <div class="panel glass">
+        <h3>📊 System Health</h3>
+        <div class="health">
+          <div class="ring">23%<span>CPU</span></div>
+          <div class="ring">31%<span>RAM</span></div>
+          <div class="ring">42%<span>Speicher</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">Phoenix 0.6.3 · Dev Build · Dr. Ronny OS</div>
+  </main>
+
+</div>
+
+<script>
+(function(){
+  function pad(n){return String(n).padStart(2,"0")}
+  function updatePhoenixTime(){
+    const now = new Date();
+    const h = now.getHours();
+
+    let text = "Guten Tag, Ronny 👋";
+    if(h < 5) text = "Gute Nacht, Ronny 🌙";
+    else if(h < 11) text = "Guten Morgen, Ronny ☀️";
+    else if(h < 17) text = "Guten Tag, Ronny 👋";
+    else if(h < 22) text = "Guten Abend, Ronny 🌆";
+    else text = "Gute Nacht, Ronny 🌙";
+
+    const g = document.getElementById("phoenixGreeting");
+    const t = document.getElementById("phoenixTime");
+    const d = document.getElementById("phoenixDate");
+
+    if(g) g.innerHTML = text.replace(/(☀️|👋|🌆|🌙)$/,"") + " <span id=\"weatherHeroIcon\">🌤️</span>";
+    if(t) t.textContent = pad(now.getHours()) + ":" + pad(now.getMinutes());
+    if(d) d.textContent = now.toLocaleDateString("de-DE", {
+      weekday:"long",
+      day:"2-digit",
+      month:"long"
+    });
+  }
+
+  updatePhoenixTime();
+  setInterval(updatePhoenixTime, 30000);
+})();
+</script>
+
+
+<script>
+(function(){
+  function weatherIcon(state){
+    const map = {
+      sunny:"☀️",
+      clear:"☀️",
+      "clear-night":"🌙",
+      partlycloudy:"⛅",
+      cloudy:"☁️",
+      rainy:"🌧️",
+      pouring:"🌧️",
+      lightning:"⛈️",
+      snowy:"❄️",
+      fog:"🌫️",
+      windy:"💨",
+      hail:"🌨️"
+    };
+    return map[state] || "🌤️";
+  }
+
+  function weatherName(state){
+    const map = {
+      sunny:"sonnig",
+      "clear-night":"klare Nacht",
+      partlycloudy:"leicht bewölkt",
+      cloudy:"bewölkt",
+      rainy:"Regen",
+      pouring:"starker Regen",
+      lightning:"Gewitter",
+      snowy:"Schnee",
+      fog:"Nebel",
+      windy:"windig",
+      hail:"Hagel"
+    };
+    return map[state] || state || "Wetter";
+  }
+
+  async function loadWeather(){
+    const hero = document.getElementById("weatherHeroIcon");
+    const fact = document.getElementById("weatherFactIcon");
+    const details = document.getElementById("weatherDetails");
+
+    try{
+      const res = await fetch(new URL("api/phoenix/weather", window.location.href), {cache:"no-store"});
+      const w = await res.json();
+
+      if(!w.ready){
+        if(details) details.textContent = "Kein Wetter-Sensor gefunden";
+        return;
+      }
+
+      const icon = weatherIcon(w.state);
+      if(hero) hero.textContent = icon;
+      if(fact) fact.textContent = icon;
+
+      let text = weatherName(w.state);
+
+      if(w.temperature !== null && w.temperature !== undefined){
+        text += " · " + w.temperature + "°C";
+      }
+      if(w.humidity !== null && w.humidity !== undefined){
+        text += " · " + w.humidity + "% Luftfeuchte";
+      }
+      if(w.wind_speed !== null && w.wind_speed !== undefined){
+        text += " · Wind " + w.wind_speed + " km/h";
+      }
+      if(w.pressure !== null && w.pressure !== undefined){
+        text += " · " + w.pressure + " hPa";
+      }
+
+      if(details) details.textContent = text;
+    }catch(e){
+      if(details) details.textContent = "Wetterdaten nicht erreichbar";
+    }
+  }
+
+  loadWeather();
+  setInterval(loadWeather, 300000);
+})();
+</script>
+
+
+
+
+
+
+
+
+<script>
+(function(){
+  const flags = {
+    de:"flag-de", en:"flag-gb", es:"flag-es", fr:"flag-fr", it:"flag-it",
+    pl:"flag-pl", ru:"flag-ru", th:"flag-th", ar:"flag-sa"
+  };
+
+  const I18N = {
+    de:{
+      title:"Übersicht", dashboard:"Premium Dashboard", search:"Suchen",
+      greeting:["Gute Nacht, Ronny","Guten Morgen, Ronny","Guten Tag, Ronny","Guten Abend, Ronny"],
+      hero:"Dein Smart Home läuft stabil. Phoenix ist bereit.",
+      time:"Uhrzeit", today:"Heute", weather:"Wetter",
+      core:"🧠 Phoenix Core", coreSub:"Dein komplettes Smart Home auf einen Blick.",
+      entities:"Entitäten", automations:"Automationen", areas:"Bereiche", labels:"Labels",
+      devices:"Geräte", integrations:"Integrationen", scripts:"Skripte", scenes:"Szenen",
+      ai:"🧠 Ronny AI", aiText:"Guten Tag Ronny. Alle Systeme laufen stabil. Keine kritischen Warnungen erkannt.",
+      ask:"Frage stellen ✨", activity:"🕘 Aktivitäten", health:"📊 System Health",
+      nav:["🏠 Übersicht","🧠 Ronny AI","🏠 Home Assistant","💡 Geräte","🏷️ Labels","📍 Bereiche","⚡ Automationen","📜 Skripte","⚙️ Einstellungen"],
+      weatherStates:{partlycloudy:"leicht bewölkt",sunny:"sonnig",cloudy:"bewölkt",rainy:"Regen",pouring:"starker Regen",fog:"Nebel",windy:"windig"},
+      humidity:"Luftfeuchte", wind:"Wind"
+    },
+    en:{
+      title:"Overview", dashboard:"Premium Dashboard", search:"Search",
+      greeting:["Good night, Ronny","Good morning, Ronny","Good day, Ronny","Good evening, Ronny"],
+      hero:"Your smart home is stable. Phoenix is ready.",
+      time:"Time", today:"Today", weather:"Weather",
+      core:"🧠 Phoenix Core", coreSub:"Your complete smart home at a glance.",
+      entities:"Entities", automations:"Automations", areas:"Areas", labels:"Labels",
+      devices:"Devices", integrations:"Integrations", scripts:"Scripts", scenes:"Scenes",
+      ai:"🧠 Ronny AI", aiText:"Good day Ronny. All systems are stable. No critical warnings detected.",
+      ask:"Ask a question ✨", activity:"🕘 Activity", health:"📊 System Health",
+      nav:["🏠 Overview","🧠 Ronny AI","🏠 Home Assistant","💡 Devices","🏷️ Labels","📍 Areas","⚡ Automations","📜 Scripts","⚙️ Settings"],
+      weatherStates:{partlycloudy:"partly cloudy",sunny:"sunny",cloudy:"cloudy",rainy:"rain",pouring:"heavy rain",fog:"fog",windy:"windy"},
+      humidity:"humidity", wind:"wind"
+    },
+    es:{
+      title:"Resumen", dashboard:"Panel Premium", search:"Buscar",
+      greeting:["Buenas noches, Ronny","Buenos días, Ronny","Buen día, Ronny","Buenas tardes, Ronny"],
+      hero:"Tu hogar inteligente está estable. Phoenix está listo.",
+      time:"Hora", today:"Hoy", weather:"Clima",
+      core:"🧠 Phoenix Core", coreSub:"Todo tu hogar inteligente de un vistazo.",
+      entities:"Entidades", automations:"Automatizaciones", areas:"Áreas", labels:"Etiquetas",
+      devices:"Dispositivos", integrations:"Integraciones", scripts:"Scripts", scenes:"Escenas",
+      ai:"🧠 Ronny AI", aiText:"Buen día Ronny. Todos los sistemas están estables. No hay avisos críticos.",
+      ask:"Hacer una pregunta ✨", activity:"🕘 Actividad", health:"📊 Estado del sistema",
+      nav:["🏠 Resumen","🧠 Ronny AI","🏠 Home Assistant","💡 Dispositivos","🏷️ Etiquetas","📍 Áreas","⚡ Automatizaciones","📜 Scripts","⚙️ Ajustes"],
+      weatherStates:{partlycloudy:"parcialmente nublado",sunny:"soleado",cloudy:"nublado",rainy:"lluvia",pouring:"lluvia fuerte",fog:"niebla",windy:"ventoso"},
+      humidity:"humedad", wind:"viento"
+    },
+    fr:{
+      title:"Aperçu", dashboard:"Tableau Premium", search:"Rechercher",
+      greeting:["Bonne nuit, Ronny","Bonjour, Ronny","Bonne journée, Ronny","Bonsoir, Ronny"],
+      hero:"Votre maison connectée est stable. Phoenix est prêt.",
+      time:"Heure", today:"Aujourd’hui", weather:"Météo",
+      core:"🧠 Phoenix Core", coreSub:"Toute votre maison connectée en un coup d’œil.",
+      entities:"Entités", automations:"Automatisations", areas:"Zones", labels:"Étiquettes",
+      devices:"Appareils", integrations:"Intégrations", scripts:"Scripts", scenes:"Scènes",
+      ai:"🧠 Ronny AI", aiText:"Bonjour Ronny. Tous les systèmes sont stables. Aucune alerte critique détectée.",
+      ask:"Poser une question ✨", activity:"🕘 Activité", health:"📊 Santé du système",
+      nav:["🏠 Aperçu","🧠 Ronny AI","🏠 Home Assistant","💡 Appareils","🏷️ Étiquettes","📍 Zones","⚡ Automatisations","📜 Scripts","⚙️ Réglages"],
+      weatherStates:{partlycloudy:"partiellement nuageux",sunny:"ensoleillé",cloudy:"nuageux",rainy:"pluie",pouring:"forte pluie",fog:"brouillard",windy:"venteux"},
+      humidity:"humidité", wind:"vent"
+    },
+    ru:{
+      title:"Обзор", dashboard:"Премиум панель", search:"Поиск",
+      greeting:["Доброй ночи, Ronny","Доброе утро, Ronny","Добрый день, Ronny","Добрый вечер, Ronny"],
+      hero:"Ваш умный дом стабилен. Phoenix готов.",
+      time:"Время", today:"Сегодня", weather:"Погода",
+      core:"🧠 Phoenix Core", coreSub:"Весь умный дом с первого взгляда.",
+      entities:"Сущности", automations:"Автоматизации", areas:"Области", labels:"Метки",
+      devices:"Устройства", integrations:"Интеграции", scripts:"Скрипты", scenes:"Сцены",
+      ai:"🧠 Ronny AI", aiText:"Добрый день, Ronny. Все системы стабильны. Критических предупреждений нет.",
+      ask:"Задать вопрос ✨", activity:"🕘 Активность", health:"📊 Состояние системы",
+      nav:["🏠 Обзор","🧠 Ronny AI","🏠 Home Assistant","💡 Устройства","🏷️ Метки","📍 Области","⚡ Автоматизации","📜 Скрипты","⚙️ Настройки"],
+      weatherStates:{partlycloudy:"переменная облачность",sunny:"солнечно",cloudy:"облачно",rainy:"дождь",pouring:"сильный дождь",fog:"туман",windy:"ветрено"},
+      humidity:"влажность", wind:"ветер"
+    },
+    ar:{
+      title:"نظرة عامة", dashboard:"لوحة تحكم مميزة", search:"بحث",
+      greeting:["تصبح على خير، Ronny","صباح الخير، Ronny","نهارك سعيد، Ronny","مساء الخير، Ronny"],
+      hero:"منزلك الذكي مستقر. Phoenix جاهز.",
+      time:"الوقت", today:"اليوم", weather:"الطقس",
+      core:"🧠 Phoenix Core", coreSub:"منزلك الذكي بالكامل في لمحة واحدة.",
+      entities:"الكيانات", automations:"الأتمتة", areas:"المناطق", labels:"التصنيفات",
+      devices:"الأجهزة", integrations:"التكاملات", scripts:"السكربتات", scenes:"المشاهد",
+      ai:"🧠 Ronny AI", aiText:"نهارك سعيد Ronny. جميع الأنظمة مستقرة. لا توجد تحذيرات حرجة.",
+      ask:"اطرح سؤالاً ✨", activity:"🕘 النشاط", health:"📊 صحة النظام",
+      nav:["🏠 نظرة عامة","🧠 Ronny AI","🏠 Home Assistant","💡 الأجهزة","🏷️ التصنيفات","📍 المناطق","⚡ الأتمتة","📜 السكربتات","⚙️ الإعدادات"],
+      weatherStates:{partlycloudy:"غائم جزئياً",sunny:"مشمس",cloudy:"غائم",rainy:"مطر",pouring:"مطر غزير",fog:"ضباب",windy:"رياح"},
+      humidity:"الرطوبة", wind:"الرياح"
+    }
+  };
+
+  function getLang(){ return localStorage.getItem("phoenixLang") || "de"; }
+  function tr(key){ const l=getLang(); return (I18N[l]&&I18N[l][key]) || I18N.de[key] || key; }
+
+  function setCurrentFlag(lang){
+    const f=document.getElementById("currentLangFlag");
+    if(f) f.className="flag " + (flags[lang] || "flag-de");
+  }
+
+  function greeting(){
+    const h=new Date().getHours();
+    const g=tr("greeting");
+    if(h<5) return g[0];
+    if(h<11) return g[1];
+    if(h<17) return g[2];
+    return g[3];
+  }
+
+  function applyLang(lang){
+    localStorage.setItem("phoenixLang", lang);
+    document.documentElement.lang=lang;
+    document.documentElement.dir=lang==="ar" ? "rtl" : "ltr";
+    setCurrentFlag(lang);
+
+    document.querySelectorAll("[data-i18n]").forEach(el=>{
+      const key=el.dataset.i18n;
+      if(tr(key)) el.textContent=tr(key);
+    });
+
+    const topTitle=document.querySelector(".topbar h2");
+    if(topTitle) topTitle.textContent=tr("title");
+
+    const topKicker=document.querySelector(".topbar .kicker");
+    if(topKicker) topKicker.textContent=tr("dashboard");
+
+    const search=document.querySelector(".top-actions button span");
+    if(search) search.textContent=tr("search");
+
+    const hero=document.getElementById("phoenixGreeting");
+    const icon=document.getElementById("weatherHeroIcon")?.textContent || "";
+    if(hero) hero.innerHTML=greeting() + " <span id=\"weatherHeroIcon\">" + icon + "</span>";
+
+    const heroText=document.querySelector(".hero p:not(.kicker)");
+    if(heroText) heroText.textContent=tr("hero");
+
+    document.querySelectorAll(".nav button").forEach((b,i)=>{
+      const nav=tr("nav");
+      if(nav && nav[i]) b.textContent=nav[i];
+    });
+
+    document.querySelectorAll(".panel").forEach(panel=>{
+      const h3=panel.querySelector("h3");
+      const p=panel.querySelector("p");
+      if(!h3) return;
+
+      if(h3.textContent.includes("Phoenix Core")){
+        h3.textContent=tr("core");
+        if(p) p.textContent=tr("coreSub");
+      }
+
+      if(h3.textContent.includes("Ronny AI")){
+        h3.textContent=tr("ai");
+        const bubble=panel.querySelector(".ai-bubble");
+        if(bubble) bubble.textContent=tr("aiText");
+        const btn=panel.querySelector("button");
+        if(btn) btn.textContent=tr("ask");
+      }
+
+      if(h3.textContent.includes("Aktiv") || h3.textContent.includes("Activity") || h3.textContent.includes("النشاط")){
+        h3.textContent=tr("activity");
+      }
+
+      if(h3.textContent.includes("System Health") || h3.textContent.includes("Estado") || h3.textContent.includes("Состояние") || h3.textContent.includes("صحة")){
+        h3.textContent=tr("health");
+      }
+    });
+
+    if(window.phoenixRefreshWeatherText) window.phoenixRefreshWeatherText();
+  }
+
+  document.querySelectorAll("[data-lang]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      applyLang(btn.dataset.lang);
+      const menu=btn.closest("details");
+      if(menu) menu.open=false;
+    });
+  });
+
+  window.phoenixI18N={applyLang,tr,getLang,I18N};
+  applyLang(getLang());
+})();
+</script>
+
+</body>
+</html>

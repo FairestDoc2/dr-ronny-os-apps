@@ -1,0 +1,11 @@
+{
+  "current_milestone": "CORE-023",
+  "next_task": "Home-Assistant-Verbindungsstatus als API bereitstellen",
+  "upcoming": [
+    "Home-Assistant-Verbindungsstatus als API bereitstellen",
+    "Home-Assistant-V2-Modul erstellen",
+    "Entities und Geräte read-only einlesen",
+    "Bereiche read-only einlesen",
+    "Schreibende Home-Assistant-Aktionen mit Sicherheitslogik vorbereiten"
+  ]
+}
