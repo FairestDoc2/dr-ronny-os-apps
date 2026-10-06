@@ -215,6 +215,20 @@ def _phoenix_sync_dev_to_release() -> dict:
         ) + "\n"
     )
 
+    release_status_source = (
+        PHOENIX_DEV_ROOT
+        / "manifest"
+        / "release.json"
+    )
+
+    if release_status_source.is_file():
+        shutil.copy2(
+            release_status_source,
+            PHOENIX_RELEASE_APP
+            / "manifest"
+            / "release.json",
+        )
+
     return {
         "version": version,
         "release_path": str(
@@ -307,6 +321,27 @@ def phoenix_system_control_status():
     developer_mode = _phoenix_developer_mode_enabled()
     owner_installation = _phoenix_owner_installation()
 
+    release_versions = None
+
+    if developer_mode:
+        try:
+            from app.core.release_engine import ReleaseEngine
+
+            development_version = (
+                ReleaseEngine.get_current_version()
+            )
+            published_version = (
+                ReleaseEngine.get_published_version()
+            )
+
+            release_versions = {
+                "published_version": published_version,
+                "development_version": development_version,
+                "publish_version": development_version,
+            }
+        except Exception:
+            release_versions = None
+
     # Interne Git-Informationen niemals an normale
     # Installationen ausliefern.
     if (
@@ -320,6 +355,7 @@ def phoenix_system_control_status():
         "status": "ok",
         "developer_mode": developer_mode,
         "owner_installation": owner_installation,
+        "release_versions": release_versions,
         "phoenix": {
             "name": version.get("name", "Dr. Ronny OS Phoenix"),
             "version": version.get("version", "unknown"),
@@ -506,6 +542,253 @@ def phoenix_system_control_developer_update(
             "status": "error",
             "updated": False,
             "rebuild_scheduled": False,
+            "error": str(exc),
+        }
+
+
+@router.post(
+    "/api/phoenix/system-control/developer-version"
+)
+def phoenix_system_control_developer_version(
+    version: str = Body(..., embed=True),
+):
+    """
+    Setzt die gewünschte Phoenix-Entwicklerversion.
+    """
+
+    if not _phoenix_developer_mode_enabled():
+        raise HTTPException(
+            status_code=403,
+            detail="Developer Mode ist nicht aktiv.",
+        )
+
+    try:
+        from app.core.release_engine import ReleaseEngine
+
+        result = (
+            ReleaseEngine.set_development_version(
+                version
+            )
+        )
+
+        return {
+            "status": "ok",
+            "updated": True,
+            "development_version": result.get(
+                "development_version"
+            ),
+            "published_version": result.get(
+                "published_version"
+            ),
+        }
+
+    except Exception as exc:
+        return {
+            "status": "error",
+            "updated": False,
+            "error": str(exc),
+        }
+
+
+@router.post(
+    "/api/phoenix/system-control/developer-publish"
+)
+def phoenix_system_control_developer_publish():
+    """
+    Veröffentlicht eine neue Phoenix-Version.
+
+    Ablauf:
+    1. Entwicklerversion prüfen
+    2. Dev → Release synchronisieren
+    3. Release-Version vorbereiten
+    4. Release committen
+    5. Zu GitHub pushen
+    6. Veröffentlichte Version speichern
+    """
+    if not _phoenix_developer_mode_enabled():
+        raise HTTPException(
+            status_code=403,
+            detail="Developer Mode ist nicht aktiv.",
+        )
+
+    from app.core.release_engine import ReleaseEngine
+
+    token = _phoenix_github_token()
+
+    if not token:
+        return {
+            "status": "error",
+            "published": False,
+            "error": "GitHub-Token ist nicht konfiguriert.",
+        }
+
+    manifest_original = (
+        ReleaseEngine.VERSION_FILE.read_text(
+            encoding="utf-8"
+        )
+    )
+
+    config_original = (
+        ReleaseEngine.CONFIG_FILE.read_text(
+            encoding="utf-8"
+        )
+    )
+
+    pushed = False
+    release_head = None
+
+    release_status_file = (
+        ReleaseEngine.RELEASE_FILE
+    )
+
+    if not release_status_file.is_file():
+        return {
+            "status": "error",
+            "published": False,
+            "error": "manifest/release.json fehlt.",
+        }
+
+    if not release_status_file.parent.is_dir():
+        return {
+            "status": "error",
+            "published": False,
+            "error": "Release-Manifest-Verzeichnis fehlt.",
+        }
+
+    try:
+        with release_status_file.open(
+            "a",
+            encoding="utf-8",
+        ):
+            pass
+    except OSError as exc:
+        return {
+            "status": "error",
+            "published": False,
+            "error": (
+                "manifest/release.json ist nicht "
+                f"schreibbar: {exc}"
+            ),
+        }
+
+    try:
+        version = (
+            ReleaseEngine.get_current_version()
+        )
+
+        published_version = (
+            ReleaseEngine.get_published_version()
+        )
+
+        def version_tuple(
+            value: str,
+        ) -> tuple[int, int, int]:
+            parts = value.split(".")
+
+            if (
+                len(parts) != 3
+                or not all(
+                    part.isdigit()
+                    for part in parts
+                )
+            ):
+                raise RuntimeError(
+                    f"Ungültige Phoenix-Version: {value}"
+                )
+
+            return tuple(
+                int(part)
+                for part in parts
+            )
+
+        if version_tuple(version) <= version_tuple(
+            published_version
+        ):
+            raise RuntimeError(
+                "Die Entwicklerversion muss höher "
+                "als die veröffentlichte Version sein."
+            )
+
+        release_head = (
+            ReleaseEngine.get_repository_head(
+                PHOENIX_RELEASE_ROOT
+            )
+        )
+
+        _phoenix_sync_dev_to_release()
+
+        ReleaseEngine.write_release_copy_published_version(
+            PHOENIX_RELEASE_ROOT,
+            version,
+        )
+
+        commit_result = ReleaseEngine.commit_release(
+            PHOENIX_RELEASE_ROOT,
+            version,
+        )
+
+        push_result = ReleaseEngine.push_release(
+            PHOENIX_RELEASE_ROOT,
+            token,
+            branch="main",
+        )
+
+        pushed = bool(
+            push_result.get("pushed", False)
+        )
+
+        if not pushed:
+            raise RuntimeError(
+                "GitHub-Push wurde nicht bestätigt."
+            )
+
+        ReleaseEngine.write_published_version(
+            version
+        )
+
+        return {
+            "status": "ok",
+            "published": True,
+            "version": version,
+            "synced": True,
+            "commit": commit_result.get("commit"),
+            "pushed": True,
+        }
+
+    except Exception as exc:
+        rollback_error = None
+
+        if not pushed and release_head:
+            try:
+                ReleaseEngine.rollback_release_commit(
+                    PHOENIX_RELEASE_ROOT,
+                    release_head,
+                )
+            except Exception as rollback_exc:
+                rollback_error = str(
+                    rollback_exc
+                )
+
+        if not pushed:
+            ReleaseEngine.VERSION_FILE.write_text(
+                manifest_original,
+                encoding="utf-8",
+            )
+
+            ReleaseEngine.CONFIG_FILE.write_text(
+                config_original,
+                encoding="utf-8",
+            )
+
+        return {
+            "status": "error",
+            "published": False,
+            "rolled_back": (
+                not pushed
+                and bool(release_head)
+                and rollback_error is None
+            ),
+            "rollback_error": rollback_error,
             "error": str(exc),
         }
 
@@ -1271,5 +1554,54 @@ def phoenix_system_control_delete_ha_backup(
         return {
             "status": "error",
             "deleted": False,
+            "error": str(exc),
+        }
+
+
+@router.post(
+    "/api/phoenix/system-control/github-push-test"
+)
+def phoenix_system_control_github_push_test():
+    """
+    Testet den sicheren GitHub-Push mit dem
+    serverseitig gespeicherten Token.
+
+    Erzeugt weder Version noch Commit.
+    """
+
+    if not _phoenix_developer_mode_enabled():
+        raise HTTPException(
+            status_code=403,
+            detail="Developer Mode ist nicht aktiv.",
+        )
+
+    try:
+        from app.core.release_engine import ReleaseEngine
+
+        token = _phoenix_github_token()
+
+        if not token:
+            raise RuntimeError(
+                "GitHub-Token ist nicht konfiguriert."
+            )
+
+        result = ReleaseEngine.push_release(
+            PHOENIX_RELEASE_ROOT,
+            token,
+            branch="main",
+        )
+
+        return {
+            "status": "ok",
+            "authenticated": True,
+            "pushed": result.get("pushed", False),
+            "branch": result.get("branch"),
+        }
+
+    except Exception as exc:
+        return {
+            "status": "error",
+            "authenticated": False,
+            "pushed": False,
             "error": str(exc),
         }
