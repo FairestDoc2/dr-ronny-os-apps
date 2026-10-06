@@ -46,19 +46,60 @@ PHOENIX_RELEASE_APP = (
 
 def _phoenix_github_token() -> str:
     """
-    Liest den GitHub-Token ausschließlich serverseitig
-    aus den Home-Assistant-App-Optionen.
+    Liest den GitHub-Token ausschließlich serverseitig.
+
+    Primär wird /data/options.json verwendet.
+    Auf der Owner-Installation dient die Supervisor-API
+    als Fallback für die gespeicherten App-Optionen.
     """
 
     try:
-        if not OPTIONS_PATH.is_file():
-            return ""
+        if OPTIONS_PATH.is_file():
+            data = json.loads(
+                OPTIONS_PATH.read_text()
+            )
 
-        data = json.loads(
-            OPTIONS_PATH.read_text()
+            token = data.get(
+                "github_token",
+                "",
+            )
+
+            if isinstance(token, str):
+                token = token.strip()
+
+                if token:
+                    return token
+
+    except (
+        OSError,
+        json.JSONDecodeError,
+    ):
+        pass
+
+    if not _phoenix_owner_installation():
+        return ""
+
+    try:
+        result = supervisor_request(
+            "GET",
+            "/addons/local_ronny_phoenix/info",
+            timeout=15,
         )
 
-        token = data.get(
+        data = result.get(
+            "data",
+            {},
+        )
+
+        options = data.get(
+            "options",
+            {},
+        )
+
+        if not isinstance(options, dict):
+            return ""
+
+        token = options.get(
             "github_token",
             "",
         )
@@ -68,10 +109,7 @@ def _phoenix_github_token() -> str:
 
         return token.strip()
 
-    except (
-        OSError,
-        json.JSONDecodeError,
-    ):
+    except Exception:
         return ""
 
 
@@ -170,9 +208,34 @@ def _phoenix_sync_dev_to_release() -> dict:
                 PHOENIX_RELEASE_APP / filename,
             )
 
-    shutil.copy2(
-        config_path,
-        PHOENIX_RELEASE_APP / "config.yaml",
+    # Öffentliche Release-Konfiguration erzeugen.
+    # Das Owner-only GitHub-Token-Schema darf niemals
+    # in die öffentliche Release-Kopie gelangen.
+    config_lines = config_path.read_text().splitlines()
+
+    public_config_lines = []
+    skip_schema = False
+
+    for line in config_lines:
+        stripped = line.strip()
+
+        if stripped == "schema:":
+            skip_schema = True
+            continue
+
+        if skip_schema:
+            if line and not line[0].isspace():
+                skip_schema = False
+            else:
+                continue
+
+        public_config_lines.append(line)
+
+    (
+        PHOENIX_RELEASE_APP / "config.yaml"
+    ).write_text(
+        "\n".join(public_config_lines).rstrip()
+        + "\n"
     )
 
     manifest_path = (

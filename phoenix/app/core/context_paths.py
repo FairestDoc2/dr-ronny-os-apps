@@ -13,12 +13,20 @@ class ContextPaths:
     """Zentrale Definition aller Phoenix-Pfade."""
 
     # Projektwurzel
+    #
+    # Auf der Owner-/Entwicklungsinstallation ist
+    # /addons/ronny_phoenix die persistente Arbeitsquelle.
+    # Diese muss Vorrang vor dem internen /app-Code
+    # des Containers haben.
     _SOURCE_ROOT = Path(__file__).resolve().parents[1]
-    PROJECT_ROOT = (
-        _SOURCE_ROOT
-        if (_SOURCE_ROOT / "manifest").exists()
-        else Path(__file__).resolve().parents[2]
-    )
+    _PERSISTENT_ROOT = Path("/addons/ronny_phoenix")
+
+    if (_PERSISTENT_ROOT / "manifest").exists():
+        PROJECT_ROOT = _PERSISTENT_ROOT
+    elif (_SOURCE_ROOT / "manifest").exists():
+        PROJECT_ROOT = _SOURCE_ROOT
+    else:
+        PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
     # Hauptordner
     PHOENIX_ROOT = PROJECT_ROOT / ".phoenix"
