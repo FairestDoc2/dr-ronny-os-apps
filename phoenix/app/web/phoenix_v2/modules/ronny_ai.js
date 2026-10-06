@@ -1078,7 +1078,7 @@ export async function renderRonnyAI() {
       <header class="ronny-ai-hero">
         <img
           class="ronny-ai-logo"
-          src="/local/avatar.png"
+          src="phoenix_v2/assets/phoenix-logo.png?v=1029"
           alt="Ronny AI"
         >
 

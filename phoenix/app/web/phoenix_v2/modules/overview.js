@@ -12,7 +12,7 @@ import {
 
 import { t } from "../core/i18n.js?v=20260928-1050";
 
-const overviewLogoUrl = "/local/avatar.png";
+const overviewLogoUrl = "phoenix_v2/assets/phoenix-logo.png?v=1029";
 
 function escapeHtml(value) {
   return String(value ?? "")

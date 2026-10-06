@@ -43,6 +43,10 @@ import {
 } from "../modules/settings.js?v=20260928-1050";
 
 import {
+  renderHelp
+} from "../modules/help.js?v=20261006-help";
+
+import {
   renderHomeAssistant
 } from "../modules/home_assistant.js?v=20260928-1050";
 
@@ -108,6 +112,11 @@ const navigationItems = [
     route: "settings",
     icon: "💾",
     key: "navigation.settings"
+  },
+  {
+    route: "help",
+    icon: "❓",
+    key: "navigation.help"
   }
 ];
 
@@ -288,6 +297,11 @@ function registerRoutes() {
   registerRoute(
     "settings",
     renderSettings
+  );
+
+  registerRoute(
+    "help",
+    renderHelp
   );
 
   registerRoute(

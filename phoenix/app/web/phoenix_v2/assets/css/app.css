@@ -782,3 +782,203 @@ input:focus-visible {
     font-size: 18px;
   }
 }
+
+
+/* Phoenix Help & Information */
+
+.help-intro {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 20px;
+}
+
+.help-intro-logo {
+  width: 86px;
+  height: 86px;
+  flex: 0 0 86px;
+}
+
+.help-intro-logo img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.help-jump-navigation {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin: 0 0 26px;
+}
+
+.help-jump-navigation a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  text-decoration: none;
+  text-align: center;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease;
+}
+
+.help-jump-navigation a:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.help-section {
+  scroll-margin-top: 24px;
+  margin-top: 30px;
+}
+
+.help-section-header {
+  margin-bottom: 14px;
+}
+
+.help-card {
+  min-width: 0;
+}
+
+.help-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.help-card-heading h3 {
+  margin: 0;
+}
+
+.help-card-icon {
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.help-list {
+  margin: 14px 0 0;
+  padding-left: 20px;
+}
+
+.help-list li {
+  margin: 7px 0;
+  line-height: 1.5;
+}
+
+.help-backup-note {
+  margin-top: 14px;
+}
+
+.help-contact-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.help-email-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  text-decoration: none;
+  white-space: nowrap;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 760px) {
+  .help-intro {
+    align-items: flex-start;
+  }
+
+  .help-intro-logo {
+    width: 68px;
+    height: 68px;
+    flex-basis: 68px;
+  }
+
+  .help-jump-navigation {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .help-contact-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .help-email-button {
+    width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 460px) {
+  .help-intro {
+    flex-direction: column;
+  }
+
+  .help-jump-navigation {
+    grid-template-columns: 1fr;
+  }
+
+  .help-section {
+    margin-top: 24px;
+  }
+}
+
+/* Phoenix Help – Developer information */
+.help-developer-card {
+  margin-top: 14px;
+}
+
+.help-developer-card h3 {
+  margin-top: 0;
+}
+
+.help-detail-list {
+  margin: 14px 0 0;
+  padding-left: 20px;
+}
+
+.help-detail-list li {
+  margin: 7px 0;
+  line-height: 1.5;
+}
+
+.help-developer-warning {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  line-height: 1.5;
+}
+
+@media (max-width: 760px) {
+  .help-developer-card {
+    min-width: 0;
+  }
+
+  .help-detail-list {
+    padding-left: 18px;
+  }
+
+  .help-developer-warning {
+    overflow-wrap: anywhere;
+  }
+}
