@@ -350,6 +350,28 @@ async function setDeveloperMode(enabled) {
   return data;
 }
 
+
+async function updateDeveloperVersion() {
+  const response = await fetch(
+    "api/phoenix/system-control/developer-update",
+    {
+      method: "POST"
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok || data.status === "error") {
+    throw new Error(
+      data.detail ||
+      data.error ||
+      "Entwicklerversion konnte nicht aktualisiert werden."
+    );
+  }
+
+  return data;
+}
+
 function renderSnapshots(data) {
   const snapshots = data.snapshots || [];
 
@@ -747,6 +769,28 @@ export async function renderSettings() {
         ` : ""}
 
         ${developerMode ? `
+        <article class="card developer-update-card">
+          <h3>
+            🔄 ${t("settings.developerUpdate")}
+          </h3>
+
+          <p>
+            ${t("settings.developerUpdateDescription")}
+          </p>
+
+          <button
+            id="developerUpdateButton"
+            type="button"
+            class="btn"
+          >
+            🔄 ${t("settings.developerUpdate")}
+          </button>
+
+          <p id="developerUpdateStatus"></p>
+        </article>
+        ` : ""}
+
+        ${developerMode ? `
         <article class="card">
           <h3>🌿 Git</h3>
 
@@ -861,6 +905,16 @@ export async function renderSettings() {
       const developerModeToggle =
         document.getElementById(
           "developerModeToggle"
+        );
+
+      const developerUpdateButton =
+        document.getElementById(
+          "developerUpdateButton"
+        );
+
+      const developerUpdateStatus =
+        document.getElementById(
+          "developerUpdateStatus"
         );
 
     const createButton =
@@ -1051,6 +1105,37 @@ export async function renderSettings() {
             window.alert(
               error.message
             );
+          }
+        }
+      );
+    }
+
+    if (developerUpdateButton) {
+      developerUpdateButton.addEventListener(
+        "click",
+        async () => {
+          try {
+            developerUpdateButton.disabled = true;
+
+            if (developerUpdateStatus) {
+              developerUpdateStatus.textContent =
+                `⏳ ${t("settings.developerUpdateRunning")}`;
+            }
+
+            await updateDeveloperVersion();
+
+            if (developerUpdateStatus) {
+              developerUpdateStatus.textContent =
+                `✅ ${t("settings.developerUpdateSuccess")}`;
+            }
+
+          } catch (error) {
+            developerUpdateButton.disabled = false;
+
+            if (developerUpdateStatus) {
+              developerUpdateStatus.textContent =
+                `❌ ${error.message}`;
+            }
           }
         }
       );

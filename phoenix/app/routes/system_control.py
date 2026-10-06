@@ -4,14 +4,16 @@ Phoenix System Control API.
 Read-only Systeminformationen für die Phoenix-V2-Settings-Seite.
 """
 
+import json
 from pathlib import Path
 
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Body, HTTPException
 
 from app.core.context_manager import ContextManager
 from app.core.project_engine import ProjectEngine
 from app.core.snapshot_engine import SnapshotEngine
 from app.core.version import get_version_info
+from app.services.supervisor import supervisor_request
 
 
 router = APIRouter()
@@ -24,6 +26,250 @@ OWNER_MARKER = Path(
 DEVELOPER_MARKER = Path(
     "/config/dr_ronny_os/.developer_mode"
 )
+
+OPTIONS_PATH = Path(
+    "/data/options.json"
+)
+
+PHOENIX_DEV_ROOT = Path(
+    "/addons/ronny_phoenix"
+)
+
+PHOENIX_RELEASE_ROOT = Path(
+    "/addons/ronny_phoenix/release/dr-ronny-os-apps"
+)
+
+PHOENIX_RELEASE_APP = (
+    PHOENIX_RELEASE_ROOT / "phoenix"
+)
+
+
+def _phoenix_github_token() -> str:
+    """
+    Liest den GitHub-Token ausschließlich serverseitig
+    aus den Home-Assistant-App-Optionen.
+    """
+
+    try:
+        if not OPTIONS_PATH.is_file():
+            return ""
+
+        data = json.loads(
+            OPTIONS_PATH.read_text()
+        )
+
+        token = data.get(
+            "github_token",
+            "",
+        )
+
+        if not isinstance(token, str):
+            return ""
+
+        return token.strip()
+
+    except (
+        OSError,
+        json.JSONDecodeError,
+    ):
+        return ""
+
+
+def _phoenix_sync_dev_to_release() -> dict:
+    """
+    Synchronisiert den lokalen Phoenix-Entwicklungsstand
+    in die öffentliche Release-Kopie.
+
+    Führt keinen Rebuild, Commit oder Push aus.
+    """
+    import shutil
+    import subprocess
+
+    if not PHOENIX_DEV_ROOT.is_dir():
+        raise RuntimeError(
+            "Phoenix-Entwicklungsverzeichnis fehlt."
+        )
+
+    if not PHOENIX_RELEASE_APP.is_dir():
+        raise RuntimeError(
+            "Phoenix-Release-Verzeichnis fehlt."
+        )
+
+    diff_check = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(PHOENIX_DEV_ROOT),
+            "diff",
+            "--check",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+
+    if diff_check.returncode != 0:
+        raise RuntimeError(
+            diff_check.stderr.strip()
+            or diff_check.stdout.strip()
+            or "Git-Diff-Prüfung fehlgeschlagen."
+        )
+
+    config_path = (
+        PHOENIX_DEV_ROOT / "config.yaml"
+    )
+
+    version = ""
+
+    for line in config_path.read_text().splitlines():
+        stripped = line.strip()
+
+        if stripped.startswith("version:"):
+            version = (
+                stripped.split(":", 1)[1]
+                .strip()
+                .strip('"')
+                .strip("'")
+            )
+            break
+
+    if not version:
+        raise RuntimeError(
+            "Version aus config.yaml konnte nicht gelesen werden."
+        )
+
+    source_app = PHOENIX_DEV_ROOT / "app"
+    target_app = PHOENIX_RELEASE_APP / "app"
+
+    if target_app.exists():
+        shutil.rmtree(target_app)
+
+    shutil.copytree(
+        source_app,
+        target_app,
+    )
+
+    build_files = (
+        "Dockerfile",
+        "build.yaml",
+        "requirements.txt",
+        "run.sh",
+        "icon.png",
+        "logo.png",
+        "README.md",
+        "DOCS.md",
+    )
+
+    for filename in build_files:
+        source = PHOENIX_DEV_ROOT / filename
+
+        if source.exists():
+            shutil.copy2(
+                source,
+                PHOENIX_RELEASE_APP / filename,
+            )
+
+    shutil.copy2(
+        config_path,
+        PHOENIX_RELEASE_APP / "config.yaml",
+    )
+
+    manifest_path = (
+        PHOENIX_RELEASE_APP
+        / "manifest"
+        / "version.json"
+    )
+
+    if manifest_path.exists():
+        manifest = json.loads(
+            manifest_path.read_text()
+        )
+    else:
+        manifest = {}
+
+    manifest["name"] = manifest.get(
+        "name",
+        "Dr. Ronny OS Phoenix",
+    )
+    manifest["version"] = version
+    manifest["stage"] = manifest.get(
+        "stage",
+        "stable",
+    )
+    manifest["architecture_locked"] = manifest.get(
+        "architecture_locked",
+        True,
+    )
+
+    manifest_path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    manifest_path.write_text(
+        json.dumps(
+            manifest,
+            indent=2,
+            ensure_ascii=False,
+        ) + "\n"
+    )
+
+    return {
+        "version": version,
+        "release_path": str(
+            PHOENIX_RELEASE_APP
+        ),
+    }
+
+
+def _phoenix_reload_store() -> dict:
+    """
+    Lädt den Home-Assistant-App-Store
+    über den Supervisor neu.
+    """
+
+    result = supervisor_request(
+        "POST",
+        "/store/reload",
+        timeout=60,
+    )
+
+    if result.get("result") != "ok":
+        raise RuntimeError(
+            result.get(
+                "message",
+                "Home-Assistant-Store-Reload fehlgeschlagen.",
+            )
+        )
+
+    return result
+
+
+def _phoenix_rebuild_self() -> dict:
+    """
+    Startet einen erzwungenen Rebuild der lokalen
+    Phoenix-Entwicklungs-App über den Supervisor.
+    """
+
+    result = supervisor_request(
+        "POST",
+        "/addons/local_ronny_phoenix/rebuild",
+        payload={
+            "force": True,
+        },
+        timeout=300,
+    )
+
+    if result.get("result") != "ok":
+        raise RuntimeError(
+            result.get(
+                "message",
+                "Phoenix-Rebuild fehlgeschlagen.",
+            )
+        )
+
+    return result
 
 
 def _phoenix_owner_installation() -> bool:
@@ -143,6 +389,375 @@ def phoenix_system_control_set_developer_mode(
         "owner_installation": True,
         "enabled": _phoenix_developer_mode_enabled(),
     }
+
+
+@router.get(
+    "/api/phoenix/system-control/developer-options-test"
+)
+def phoenix_system_control_developer_options_test():
+    """
+    Prüft nur, ob /data/options.json im Container vorhanden ist.
+    Gibt niemals geheime Werte zurück.
+    """
+
+    if not _phoenix_developer_mode_enabled():
+        raise HTTPException(
+            status_code=403,
+            detail="Developer Mode ist nicht aktiv.",
+        )
+
+    options_path = Path("/data/options.json")
+
+    import shutil
+    import subprocess
+
+    git_status = ""
+
+    try:
+        result = subprocess.run(
+            [
+                "git",
+                "-C",
+                "/addons/ronny_phoenix/release/dr-ronny-os-apps",
+                "status",
+                "-sb",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        )
+
+        git_status = result.stdout.strip()
+    except Exception:
+        git_status = ""
+
+    return {
+        "status": "ok",
+        "exists": options_path.is_file(),
+        "path": str(options_path),
+        "github_token_configured": bool(
+            _phoenix_github_token()
+        ),
+        "git_available": bool(
+            shutil.which("git")
+        ),
+        "ha_cli_available": bool(
+            shutil.which("ha")
+        ),
+        "release_git_status": git_status,
+        "release_repo_exists": Path(
+            "/addons/ronny_phoenix/release/dr-ronny-os-apps"
+        ).is_dir(),
+        "release_git_exists": Path(
+            "/addons/ronny_phoenix/release/dr-ronny-os-apps/.git"
+        ).is_dir(),
+        "dev_deploy_script_exists": Path(
+            "/addons/ronny_phoenix/tools/phoenix-dev-deploy.sh"
+        ).is_file(),
+        "app_git_exists": Path(
+            "/app/.git"
+        ).is_dir(),
+    }
+
+
+@router.post(
+    "/api/phoenix/system-control/developer-update"
+)
+def phoenix_system_control_developer_update(
+    background_tasks: BackgroundTasks,
+):
+    """
+    Aktualisiert die lokale Phoenix-Entwicklerversion.
+
+    Ablauf:
+    1. Dev → Release synchronisieren
+    2. Home-Assistant-Store neu laden
+    3. Antwort zurückgeben
+    4. Phoenix anschließend im Hintergrund rebuilden
+    """
+
+    if not _phoenix_developer_mode_enabled():
+        raise HTTPException(
+            status_code=403,
+            detail="Developer Mode ist nicht aktiv.",
+        )
+
+    try:
+        sync_result = _phoenix_sync_dev_to_release()
+
+        _phoenix_reload_store()
+
+        background_tasks.add_task(
+            _phoenix_rebuild_self
+        )
+
+        return {
+            "status": "ok",
+            "updated": True,
+            "rebuild_scheduled": True,
+            "version": sync_result.get(
+                "version"
+            ),
+        }
+
+    except Exception as exc:
+        return {
+            "status": "error",
+            "updated": False,
+            "rebuild_scheduled": False,
+            "error": str(exc),
+        }
+
+
+@router.post(
+    "/api/phoenix/system-control/dev-sync-test"
+)
+def phoenix_system_control_dev_sync_test():
+    """
+    Testet nur die Dev→Release-Synchronisation.
+    Kein Rebuild, kein Commit und kein Push.
+    """
+
+    if not _phoenix_developer_mode_enabled():
+        raise HTTPException(
+            status_code=403,
+            detail="Developer Mode ist nicht aktiv.",
+        )
+
+    try:
+        result = _phoenix_sync_dev_to_release()
+
+        return {
+            "status": "ok",
+            "synced": True,
+            "version": result.get("version"),
+        }
+
+    except Exception as exc:
+        return {
+            "status": "error",
+            "synced": False,
+            "error": str(exc),
+        }
+
+
+@router.post(
+    "/api/phoenix/system-control/store-reload-test"
+)
+def phoenix_system_control_store_reload_test():
+    """
+    Testet nur den Supervisor-Store-Reload.
+    Kein Rebuild, kein Commit und kein Push.
+    """
+
+    if not _phoenix_developer_mode_enabled():
+        raise HTTPException(
+            status_code=403,
+            detail="Developer Mode ist nicht aktiv.",
+        )
+
+    try:
+        result = supervisor_request(
+            "POST",
+            "/store/reload",
+            timeout=60,
+        )
+
+        return {
+            "status": "ok",
+            "reloaded": True,
+            "result": result.get("result"),
+        }
+
+    except Exception as exc:
+        return {
+            "status": "error",
+            "reloaded": False,
+            "error": str(exc),
+        }
+
+
+@router.post(
+    "/api/phoenix/system-control/rebuild-test"
+)
+def phoenix_system_control_rebuild_test():
+    """
+    Testet nur den Supervisor-Rebuild der eigenen Phoenix-App.
+    Kein Commit und kein Push.
+    """
+
+    if not _phoenix_developer_mode_enabled():
+        raise HTTPException(
+            status_code=403,
+            detail="Developer Mode ist nicht aktiv.",
+        )
+
+    try:
+        result = supervisor_request(
+            "POST",
+            "/addons/local_ronny_phoenix/rebuild",
+            payload={
+                "force": True,
+            },
+            timeout=300,
+        )
+
+        return {
+            "status": "ok",
+            "rebuild_started": True,
+            "result": result.get("result"),
+        }
+
+    except Exception as exc:
+        return {
+            "status": "error",
+            "rebuild_started": False,
+            "error": str(exc),
+        }
+
+
+@router.get(
+    "/api/phoenix/system-control/supervisor-test"
+)
+def phoenix_system_control_supervisor_test():
+    """
+    Prüft nur den Supervisor-Zugriff.
+    Es wird keine App neu gebaut und nichts veröffentlicht.
+    """
+
+    if not _phoenix_developer_mode_enabled():
+        raise HTTPException(
+            status_code=403,
+            detail="Developer Mode ist nicht aktiv.",
+        )
+
+    try:
+        result = supervisor_request(
+            "GET",
+            "/info",
+            timeout=15,
+        )
+
+        app_result = supervisor_request(
+            "GET",
+            "/addons/local_ronny_phoenix/info",
+            timeout=15,
+        )
+
+        app_data = app_result.get(
+            "data",
+            {},
+        )
+
+        return {
+            "status": "ok",
+            "supervisor_access": True,
+            "result": result.get("result"),
+            "app_access": (
+                app_result.get("result") == "ok"
+            ),
+            "app_slug": app_data.get("slug"),
+            "app_state": app_data.get("state"),
+        }
+
+    except Exception as exc:
+        return {
+            "status": "error",
+            "supervisor_access": False,
+            "error": str(exc),
+        }
+
+
+@router.get(
+    "/api/phoenix/system-control/github-token-test"
+)
+def phoenix_system_control_github_token_test():
+    """
+    Prüft den gespeicherten GitHub-Token serverseitig.
+    Der Token selbst wird niemals ausgegeben.
+    """
+    import urllib.request
+    from urllib.error import HTTPError, URLError
+
+    if not _phoenix_developer_mode_enabled():
+        raise HTTPException(
+            status_code=403,
+            detail="Developer Mode ist nicht aktiv.",
+        )
+
+    token = _phoenix_github_token()
+
+    if not token:
+        return {
+            "status": "error",
+            "configured": False,
+            "valid": False,
+        }
+
+    req = urllib.request.Request(
+        "https://api.github.com/user",
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/vnd.github+json",
+            "User-Agent": "Dr-Ronny-OS-Phoenix",
+        },
+    )
+
+    try:
+        with urllib.request.urlopen(
+            req,
+            timeout=15,
+        ) as response:
+            data = json.load(response)
+
+        repo_req = urllib.request.Request(
+            "https://api.github.com/repos/"
+            "FairestDoc2/dr-ronny-os-apps",
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Accept": "application/vnd.github+json",
+                "User-Agent": "Dr-Ronny-OS-Phoenix",
+            },
+        )
+
+        with urllib.request.urlopen(
+            repo_req,
+            timeout=15,
+        ) as repo_response:
+            repo_data = json.load(repo_response)
+
+        permissions = repo_data.get(
+            "permissions",
+            {},
+        )
+
+        return {
+            "status": "ok",
+            "configured": True,
+            "valid": True,
+            "login": data.get("login"),
+            "repository": repo_data.get("full_name"),
+            "can_push": bool(
+                permissions.get("push", False)
+            ),
+        }
+
+    except HTTPError as exc:
+        return {
+            "status": "error",
+            "configured": True,
+            "valid": False,
+            "http_status": exc.code,
+        }
+
+    except URLError:
+        return {
+            "status": "error",
+            "configured": True,
+            "valid": False,
+            "network_error": True,
+        }
 
 
 @router.post("/api/phoenix/system-control/snapshots")
