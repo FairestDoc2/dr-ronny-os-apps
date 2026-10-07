@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#070b12"/>
+    <stop offset="55%" stop-color="#111827"/>
+    <stop offset="100%" stop-color="#1f2937"/>
+  </linearGradient>
+  <radialGradient id="glow" cx="50%" cy="45%" r="60%">
+    <stop offset="0%" stop-color="#38bdf8" stop-opacity=".28"/>
+    <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect width="1280" height="360" rx="28" fill="url(#bg)"/>
+<rect width="1280" height="360" rx="28" fill="url(#glow)"/>
+<circle cx="1080" cy="180" r="105" fill="none" stroke="#38bdf8" stroke-opacity=".18" stroke-width="2"/>
+<circle cx="1080" cy="180" r="78" fill="none" stroke="#38bdf8" stroke-opacity=".28" stroke-width="2"/>
+<circle cx="1080" cy="180" r="50" fill="#0b1220" stroke="#38bdf8" stroke-opacity=".55" stroke-width="3"/>
+<path d="M1080 138l10 27 29 2-22 18 7 28-24-15-24 15 7-28-22-18 29-2z" fill="#38bdf8" opacity=".9"/>
+<text x="82" y="135" font-family="Arial,Helvetica,sans-serif" font-size="58" font-weight="700" fill="#ffffff">🧠 Dr. Ronny OS</text>
+<text x="86" y="205" font-family="Arial,Helvetica,sans-serif" font-size="42" font-weight="600" fill="#38bdf8">PHOENIX</text>
+<text x="88" y="252" font-family="Arial,Helvetica,sans-serif" font-size="22" fill="#d1d5db">Smart-Home Control Center für Home Assistant</text>
+<text x="88" y="300" font-family="Arial,Helvetica,sans-serif" font-size="18" fill="#9ca3af">AI · Automationen · Skripte · Geräte · Bereiche · Systemverwaltung</text>
+<rect x="1000" y="42" width="180" height="38" rx="19" fill="#38bdf8" fill-opacity=".12" stroke="#38bdf8" stroke-opacity=".35"/>
+<text x="1090" y="67" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="700" fill="#7dd3fc">STABLE 1.0.31</text>
+</svg>
