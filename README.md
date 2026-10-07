@@ -1,5 +1,7 @@
 # 🧠 Dr. Ronny OS Phoenix
 
+![Dr. Ronny OS Phoenix](https://raw.githubusercontent.com/FairestDoc2/dr-ronny-os-apps/main/docs/phoenix-banner.svg)
+
 **Das Smart-Home Control Center für Home Assistant – entwickelt für Menschen, die mehr wollen als nur einzelne Geräte zu verwalten.**
 
 Dr. Ronny OS Phoenix bündelt zentrale Home-Assistant-Funktionen in einer modernen, übersichtlichen Oberfläche und erweitert sie um intelligente Verwaltungs- und Analysefunktionen.
