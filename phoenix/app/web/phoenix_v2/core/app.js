@@ -23,10 +23,6 @@ import {
 } from "../modules/labels.js?v=20260928-1050";
 
 import {
-  renderPlaceholder
-} from "../modules/placeholder.js?v=20260928-1050";
-
-import {
   renderRonnyAI
 } from "../modules/ronny_ai.js?v=20261003-0751";
 

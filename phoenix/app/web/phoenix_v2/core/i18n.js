@@ -830,11 +830,6 @@ const translations = {
       deleteFailed: "Bereich konnte nicht gelöscht werden.",
       deleteBlocked: "Löschen blockiert: {devices} Geräte, {direct} direkt zugeordnete Entitäten und {inherited} geerbte Entitäten sind noch verbunden.",
     },
-    placeholder: {
-      title: "Modul wird vorbereitet",
-      text:
-        "Dieses Dr. Ronny OS-V2-Modul wird im nächsten Schritt angeschlossen."
-    }
   },
 
   en: {
@@ -1655,11 +1650,6 @@ const translations = {
       deleteFailed: "Area could not be deleted.",
       deleteBlocked: "Deletion blocked: {devices} devices, {direct} directly assigned entities and {inherited} inherited entities are still connected.",
     },
-    placeholder: {
-      title: "Module is being prepared",
-      text:
-        "This Dr. Ronny OS module will be connected in the next step."
-    }
   },
 
   ru: {
@@ -2477,10 +2467,6 @@ const translations = {
       deleteFailed: "Не удалось удалить зону.",
       deleteBlocked: "Удаление заблокировано: устройств — {devices}, напрямую назначенных сущностей — {direct}, унаследованных сущностей — {inherited}.",
     },
-    placeholder: {
-      title: "Модуль подготавливается",
-      text: "Этот модуль Dr. Ronny OS будет подключён на следующем этапе."
-    }
   },
 
   it: {
@@ -3298,10 +3284,6 @@ const translations = {
       deleteFailed: "Impossibile eliminare l'area.",
       deleteBlocked: "Eliminazione bloccata: {devices} dispositivi, {direct} entità assegnate direttamente e {inherited} entità ereditate sono ancora collegate.",
     },
-    placeholder: {
-      title: "Modulo in preparazione",
-      text: "Questo modulo Dr. Ronny OS verrà collegato nel prossimo passaggio."
-    }
   },
 
   es: {
@@ -4118,10 +4100,6 @@ const translations = {
       deleteFailed: "No se pudo eliminar el área.",
       deleteBlocked: "Eliminación bloqueada: siguen vinculados {devices} dispositivos, {direct} entidades asignadas directamente y {inherited} entidades heredadas.",
     },
-    placeholder: {
-      title: "Módulo en preparación",
-      text: "Este módulo de Dr. Ronny OS se conectará en el siguiente paso."
-    }
   },
 
   ar: {
@@ -4929,10 +4907,6 @@ const translations = {
       deleteFailed: "تعذر حذف المنطقة.",
       deleteBlocked: "تم منع الحذف: لا يزال هناك {devices} جهازًا و{direct} كيانًا معينًا مباشرة و{inherited} كيانًا موروثًا مرتبطًا.",
     },
-    placeholder: {
-      title: "يتم تجهيز الوحدة",
-      text: "سيتم ربط وحدة Dr. Ronny OS هذه في الخطوة التالية."
-    }
   },
 
   tr: {
@@ -5740,10 +5714,6 @@ const translations = {
       deleteFailed: "Alan silinemedi.",
       deleteBlocked: "Silme engellendi: {devices} cihaz, {direct} doğrudan atanmış varlık ve {inherited} devralınmış varlık hâlâ bağlı.",
     },
-    placeholder: {
-      title: "Modül hazırlanıyor",
-      text: "Bu Dr. Ronny OS modülü bir sonraki adımda bağlanacak."
-    }
   },
 
   th: {
@@ -6551,10 +6521,6 @@ const translations = {
       deleteFailed: "ไม่สามารถลบพื้นที่ได้",
       deleteBlocked: "ไม่อนุญาตให้ลบ: ยังมีอุปกรณ์ {devices} รายการ เอนทิตีที่กำหนดโดยตรง {direct} รายการ และเอนทิตีที่สืบทอด {inherited} รายการเชื่อมโยงอยู่",
     },
-    placeholder: {
-      title: "กำลังเตรียมโมดูล",
-      text: "โมดูล Dr. Ronny OS นี้จะเชื่อมต่อในขั้นตอนถัดไป"
-    }
   }
 };
 
