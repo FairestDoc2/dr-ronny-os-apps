@@ -1072,22 +1072,46 @@ export async function renderRonnyAI() {
 
       @media (max-width: 600px) {
         .ronny-ai-hero {
-          grid-template-columns: auto 1fr;
+          grid-template-columns: 1fr;
           padding: 17px;
+          gap: 14px;
+        }
+
+        .ronny-ai-hero > * {
+          min-width: 0;
         }
 
         .ronny-ai-logo {
           width: 64px;
           height: 64px;
+          justify-self: start;
+        }
+
+        .ronny-ai-hero h2,
+        .ronny-ai-hero p {
+          max-width: 100%;
+          overflow-wrap: anywhere;
         }
 
         .ronny-ai-status {
-          grid-column: 1 / -1;
+          grid-column: 1;
           width: fit-content;
+          max-width: 100%;
+        }
+
+        .ronny-ai-stats {
+          grid-template-columns: 1fr;
         }
 
         .ronny-ai-stat {
+          min-width: 0;
           padding: 15px;
+        }
+
+        .ronny-ai-stat-value,
+        .ronny-ai-stat-label {
+          min-width: 0;
+          overflow-wrap: anywhere;
         }
       }
     </style>

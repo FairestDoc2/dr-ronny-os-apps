@@ -3297,8 +3297,11 @@ export async function renderAutomations() {
           button.disabled = true;
 
           try {
-            if (!window.confirm(
-              t("labels.confirmCreate", { name })
+            if (!await phoenixConfirm(
+              t("labels.confirmCreate", { name }),
+              {
+                title: name
+              }
             )) {
               button.disabled = false;
               return;
@@ -6595,7 +6598,9 @@ function getAutomationTriggerParentByPath(path) {
 
       if (
         action === "trigger" &&
-        !window.confirm(t("automations.confirmRun"))
+        !await phoenixConfirm(
+          t("automations.confirmRun")
+        )
       ) {
         return;
       }
