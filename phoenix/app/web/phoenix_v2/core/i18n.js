@@ -28,7 +28,11 @@ const translations = {
       entities: "Entitäten",
       devices: "Geräte",
       labels: "Labels",
-      areas: "Bereiche"
+      areas: "Bereiche",
+      save: "Speichern",
+      cancel: "Abbrechen",
+      confirm: "Bestätigen",
+      delete: "Löschen"
     },
 
     overview: {
@@ -249,6 +253,7 @@ const translations = {
       scriptIdPlaceholder: "z. B. mein_skript",
       scriptIdRequired: "Bitte eine Skript-ID eingeben.",
       searchPlaceholder: "Skripte suchen …",
+      serviceSearchPlaceholder: "Dienst suchen …",
       configJson: "Skript-Konfiguration (JSON)",
       homeAssistantGroup: "Home Assistant",
       homeAssistantGroupHint: "Skripte, die von Home Assistant verwaltet werden.",
@@ -861,7 +866,11 @@ const translations = {
       entities: "Entities",
       devices: "Devices",
       labels: "Labels",
-      areas: "Areas"
+      areas: "Areas",
+      save: "Save",
+      cancel: "Cancel",
+      confirm: "Confirm",
+      delete: "Delete"
     },
 
     overview: {
@@ -1082,6 +1091,7 @@ const translations = {
       scriptIdPlaceholder: "e.g. my_script",
       scriptIdRequired: "Please enter a script ID.",
       searchPlaceholder: "Search scripts …",
+      serviceSearchPlaceholder: "Search service …",
       configJson: "Script configuration (JSON)",
       homeAssistantGroup: "Home Assistant",
       homeAssistantGroupHint: "Scripts managed by Home Assistant.",
@@ -1680,7 +1690,11 @@ const translations = {
       entities: "Сущности",
       devices: "Устройства",
       labels: "Метки",
-      areas: "Зоны"
+      areas: "Зоны",
+      save: "Сохранить",
+      cancel: "Отмена",
+      confirm: "Подтвердить",
+      delete: "Удалить"
     },
     overview: {
       title: "Dr. Ronny OS",
@@ -1896,6 +1910,7 @@ const translations = {
       scriptIdPlaceholder: "например, my_script",
       scriptIdRequired: "Введите ID скрипта.",
       searchPlaceholder: "Поиск скриптов …",
+      serviceSearchPlaceholder: "Поиск службы …",
       configJson: "Конфигурация скрипта (JSON)",
       homeAssistantGroup: "Home Assistant",
       homeAssistantGroupHint: "Скрипты, которыми управляет Home Assistant.",
@@ -2496,7 +2511,11 @@ const translations = {
       entities: "Entità",
       devices: "Dispositivi",
       labels: "Etichette",
-      areas: "Aree"
+      areas: "Aree",
+      save: "Salva",
+      cancel: "Annulla",
+      confirm: "Conferma",
+      delete: "Elimina"
     },
     overview: {
       title: "Dr. Ronny OS",
@@ -2712,6 +2731,7 @@ const translations = {
       scriptIdPlaceholder: "ad es. mio_script",
       scriptIdRequired: "Inserisci un ID script.",
       searchPlaceholder: "Cerca script …",
+      serviceSearchPlaceholder: "Cerca servizio …",
       configJson: "Configurazione script (JSON)",
       homeAssistantGroup: "Home Assistant",
       homeAssistantGroupHint: "Script gestiti da Home Assistant.",
@@ -3312,7 +3332,11 @@ const translations = {
       entities: "Entidades",
       devices: "Dispositivos",
       labels: "Etiquetas",
-      areas: "Áreas"
+      areas: "Áreas",
+      save: "Guardar",
+      cancel: "Cancelar",
+      confirm: "Confirmar",
+      delete: "Eliminar"
     },
     overview: {
       title: "Dr. Ronny OS",
@@ -3528,6 +3552,7 @@ const translations = {
       scriptIdPlaceholder: "p. ej. mi_script",
       scriptIdRequired: "Introduce un ID de script.",
       searchPlaceholder: "Buscar scripts …",
+      serviceSearchPlaceholder: "Buscar servicio …",
       configJson: "Configuración del script (JSON)",
       homeAssistantGroup: "Home Assistant",
       homeAssistantGroupHint: "Scripts gestionados por Home Assistant.",
@@ -4127,7 +4152,11 @@ const translations = {
       entities: "الكيانات",
       devices: "الأجهزة",
       labels: "التصنيفات",
-      areas: "المناطق"
+      areas: "المناطق",
+      save: "حفظ",
+      cancel: "إلغاء",
+      confirm: "تأكيد",
+      delete: "حذف"
     },
     overview: {
       title: "Dr. Ronny OS",
@@ -4343,6 +4372,7 @@ const translations = {
       scriptIdPlaceholder: "مثال: my_script",
       scriptIdRequired: "أدخل معرّف البرنامج النصي.",
       searchPlaceholder: "البحث في البرامج النصية …",
+      serviceSearchPlaceholder: "البحث عن خدمة …",
       configJson: "إعدادات البرنامج النصي (JSON)",
       homeAssistantGroup: "Home Assistant",
       homeAssistantGroupHint: "البرامج النصية التي يديرها Home Assistant.",
@@ -4933,7 +4963,11 @@ const translations = {
       entities: "Varlıklar",
       devices: "Cihazlar",
       labels: "Etiketler",
-      areas: "Alanlar"
+      areas: "Alanlar",
+      save: "Kaydet",
+      cancel: "İptal",
+      confirm: "Onayla",
+      delete: "Sil"
     },
     overview: {
       title: "Dr. Ronny OS",
@@ -5149,6 +5183,7 @@ const translations = {
       scriptIdPlaceholder: "örn. benim_komut_dosyam",
       scriptIdRequired: "Lütfen bir komut dosyası kimliği girin.",
       searchPlaceholder: "Komut dosyalarında ara …",
+      serviceSearchPlaceholder: "Hizmet ara …",
       configJson: "Komut dosyası yapılandırması (JSON)",
       homeAssistantGroup: "Home Assistant",
       homeAssistantGroupHint: "Home Assistant tarafından yönetilen betikler.",
@@ -5739,7 +5774,11 @@ const translations = {
       entities: "เอนทิตี",
       devices: "อุปกรณ์",
       labels: "ป้ายกำกับ",
-      areas: "พื้นที่"
+      areas: "พื้นที่",
+      save: "บันทึก",
+      cancel: "ยกเลิก",
+      confirm: "ยืนยัน",
+      delete: "ลบ"
     },
     overview: {
       title: "Dr. Ronny OS",
@@ -5955,6 +5994,7 @@ const translations = {
       scriptIdPlaceholder: "เช่น my_script",
       scriptIdRequired: "กรุณาระบุรหัสสคริปต์",
       searchPlaceholder: "ค้นหาสคริปต์ …",
+      serviceSearchPlaceholder: "ค้นหาบริการ …",
       configJson: "การกำหนดค่าสคริปต์ (JSON)",
       homeAssistantGroup: "Home Assistant",
       homeAssistantGroupHint: "สคริปต์ที่จัดการโดย Home Assistant",

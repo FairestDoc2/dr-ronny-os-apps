@@ -12,6 +12,11 @@ import {
   t
 } from "../core/i18n.js?v=20260928-1050";
 
+import {
+  phoenixConfirm,
+  phoenixPrompt
+} from "../core/dialog.js?v=20261007-0834";
+
 async function loadAssignments() {
   const paths = [
     "../api/phoenix/home-assistant/assignments",
@@ -834,9 +839,12 @@ function renderAreaOverview(content, data) {
           const oldName =
             button.dataset.areaName || "";
 
-          const newName = window.prompt(
+          const newName = await phoenixPrompt(
             t("areas.renamePrompt"),
-            oldName
+            oldName,
+            {
+              title: oldName
+            }
           );
 
           if (newName === null) {
@@ -890,10 +898,14 @@ function renderAreaOverview(content, data) {
           const areaName =
             button.dataset.areaName || areaId;
 
-          const confirmed = window.confirm(
+          const confirmed = await phoenixConfirm(
             t("areas.deleteConfirm", {
               name: areaName
-            })
+            }),
+            {
+              title: areaName,
+              danger: true
+            }
           );
 
           if (!confirmed) {

@@ -24,6 +24,24 @@ function helpCard(icon, title, description, details = []) {
 }
 
 export async function renderHelp() {
+  let developerMode = false;
+
+  try {
+    const response = await fetch(
+      "api/phoenix/system-control/status",
+      { cache: "no-store" }
+    );
+
+    if (response.ok) {
+      const status = await response.json();
+      developerMode = status.developer_mode === true;
+    }
+  } catch (error) {
+    console.warn(
+      "Phoenix Help: Entwicklerstatus konnte nicht geladen werden.",
+      error
+    );
+  }
   const page = document.getElementById("pageContent");
 
   if (!page) {
@@ -225,6 +243,7 @@ export async function renderHelp() {
         <p>${t("help.backupDifferenceText")}</p>
       </article>
 
+      ${developerMode ? `
       <article class="card help-developer-card">
         <h3>🛠️ ${t("help.developerTitle")}</h3>
         <p>${t("help.developerText")}</p>
@@ -240,6 +259,7 @@ export async function renderHelp() {
           🔒 ${t("help.developerWarning")}
         </p>
       </article>
+      ` : ""}
     </section>
 
     <section id="help-contact" class="help-section">

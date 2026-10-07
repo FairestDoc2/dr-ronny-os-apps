@@ -20,6 +20,10 @@ import {
   t
 } from "../core/i18n.js?v=20260928-1050";
 
+import {
+  phoenixConfirm
+} from "../core/dialog.js?v=20261007-0834";
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -3340,9 +3344,16 @@ export async function renderAutomations() {
           );
           const name = label?.name || labelId;
 
-          if (!window.confirm(
-            t("automations.confirmDeleteCategory", { name })
-          )) {
+          const confirmed =
+            await phoenixConfirm(
+              t("automations.confirmDeleteCategory", { name }),
+              {
+                title: name,
+                danger: true
+              }
+            );
+
+          if (!confirmed) {
             return;
           }
 
@@ -6523,13 +6534,18 @@ function getAutomationTriggerParentByPath(path) {
         return;
       }
 
-      if (
-        !window.confirm(
+      const confirmed =
+        await phoenixConfirm(
           t("automations.confirmDelete", {
             name: automationName
-          })
-        )
-      ) {
+          }),
+          {
+            title: automationName,
+            danger: true
+          }
+        );
+
+      if (!confirmed) {
         return;
       }
 

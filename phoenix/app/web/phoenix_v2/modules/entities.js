@@ -241,104 +241,265 @@ export async function renderEntities() {
   const labelFilter = document.createElement("select");
   areaFilter.innerHTML = `<option value="">${t("areas.allAreas")}</option>` + areasData.map((area) => `<option value="${escapeHtml(area.area_id)}">${escapeHtml(area.name || area.area_id)}</option>`).join("");
   labelFilter.innerHTML = `<option value="">${t("areas.allLabels")}</option>` + labelsData.map((label) => `<option value="${escapeHtml(label.label_id)}">${escapeHtml(label.name || label.label_id)}</option>`).join("");
-  const entityMap = new Map(entitiesData.map((entity) => [entity.entity_id, entity]));
-  const searchableText = new Map(entitiesData.map((entity) => [entity.entity_id, `${entity.entity_id || ""} ${entity.name || ""} ${entity.original_name || ""} ${entity.platform || ""}`.toLowerCase()]));
+  const entityMap = new Map(
+    entitiesData.map((entity) => [
+      entity.entity_id,
+      entity
+    ])
+  );
+
+  const searchableText = new Map(
+    entitiesData.map((entity) => [
+      entity.entity_id,
+      `${
+        entity.entity_id || ""
+      } ${
+        entity.name || ""
+      } ${
+        entity.original_name || ""
+      } ${
+        entity.platform || ""
+      }`.toLowerCase()
+    ])
+  );
+
+  const PAGE_SIZE = 40;
+
+  let filteredEntities = [...entitiesData];
+  let renderedCount = 0;
+
+  const renderEntityCard = (entity) => {
+    const areaName = entity.area_id
+      ? (
+          areaNames.get(entity.area_id) ||
+          t("areas.noArea")
+        )
+      : t("areas.noArea");
+
+    const labelNames =
+      getEntityLabelNames(entity);
+
+    return `
+      <article
+        class="card phoenix-entity-card"
+        data-entity-id="${escapeHtml(entity.entity_id)}"
+      >
+        <h3>${
+          escapeHtml(
+            entity.name ||
+            entity.original_name ||
+            entity.entity_id
+          )
+        }</h3>
+
+        <p>
+          ${escapeHtml(t("areas.entityId"))}:
+          <strong>${escapeHtml(entity.entity_id)}</strong>
+        </p>
+
+        <p>
+          ${escapeHtml(t("areas.platform"))}:
+          ${escapeHtml(entity.platform || "-")}
+          ·
+          ${escapeHtml(t("areas.category"))}:
+          ${escapeHtml(entity.entity_category || "-")}
+        </p>
+
+        <p>
+          ${escapeHtml(t("areas.title"))}:
+          <strong>${escapeHtml(areaName)}</strong>
+        </p>
+
+        <p>
+          ${escapeHtml(t("navigation.labels"))}:
+          <strong>${
+            escapeHtml(
+              labelNames.length
+                ? labelNames.join(", ")
+                : "-"
+            )
+          }</strong>
+        </p>
+
+        <div class="entity-actions">
+          <button
+            type="button"
+            data-entity-action="details"
+            data-entity-id="${escapeHtml(entity.entity_id)}"
+          >
+            ℹ️  ${escapeHtml(t("areas.details"))}
+          </button>
+
+          <button
+            type="button"
+            data-entity-action="name"
+            data-entity-id="${escapeHtml(entity.entity_id)}"
+          >
+            ${escapeHtml(t("areas.changeName"))}
+          </button>
+
+          <button
+            type="button"
+            data-entity-action="area"
+            data-entity-id="${escapeHtml(entity.entity_id)}"
+          >
+            ${escapeHtml(t("areas.changeArea"))}
+          </button>
+
+          <button
+            type="button"
+            data-entity-action="labels"
+            data-entity-id="${escapeHtml(entity.entity_id)}"
+          >
+            ${escapeHtml(t("areas.changeLabels"))}
+          </button>
+        </div>
+      </article>
+    `;
+  };
+
+  const updateStatus = () => {
+    if (!status) {
+      return;
+    }
+
+    status.textContent =
+      `${filteredEntities.length} ${
+        t("areas.of")
+      } ${entitiesData.length} ${
+        t("navigation.entities")
+      }`;
+  };
+
+  const renderNextBatch = () => {
+    if (
+      renderedCount >= filteredEntities.length
+    ) {
+      return;
+    }
+
+    const nextEntities =
+      filteredEntities.slice(
+        renderedCount,
+        renderedCount + PAGE_SIZE
+      );
+
+    list.insertAdjacentHTML(
+      "beforeend",
+      nextEntities
+        .map(renderEntityCard)
+        .join("")
+    );
+
+    renderedCount += nextEntities.length;
+  };
+
   const applyFilters = () => {
-    const q = search.value.trim().toLowerCase();
+    const q =
+      search.value.trim().toLowerCase();
+
     const area = areaFilter.value;
     const label = labelFilter.value;
-    let visible = 0;
-    list.querySelectorAll("[data-entity-id]").forEach((card) => {
-      const id = card.dataset.entityId;
-      const entity = entityMap.get(id);
-      const match = (!q || searchableText.get(id)?.includes(q)) && (!area || entity?.area_id === area) && (!label || getEntityLabelIds(entity).includes(label));
-      card.style.display = match ? "" : "none";
-      if (match) visible++;
-    });
-    if (status) status.textContent = `${visible} ${t("areas.of")} ${entitiesData.length} ${t("navigation.entities")}`;
+
+    filteredEntities =
+      entitiesData.filter((entity) => {
+        const id = entity.entity_id;
+
+        return (
+          (
+            !q ||
+            searchableText.get(id)?.includes(q)
+          ) &&
+          (
+            !area ||
+            entity.area_id === area
+          ) &&
+          (
+            !label ||
+            getEntityLabelIds(entity).includes(label)
+          )
+        );
+      });
+
+    renderedCount = 0;
+    list.innerHTML = "";
+
+    if (filteredEntities.length === 0) {
+      list.innerHTML =
+        `<p>${
+          escapeHtml(t("areas.noEntities"))
+        }</p>`;
+    } else {
+      renderNextBatch();
+    }
+
+    updateStatus();
   };
+
   let searchTimer;
-  search.style.cssText = "width:100%;padding:.7rem;border-radius:.55rem;margin:0";
-  areaFilter.style.cssText = search.style.cssText;
-  labelFilter.style.cssText = search.style.cssText;
+
+  search.style.cssText =
+    "width:100%;padding:.7rem;border-radius:.55rem;margin:0";
+
+  areaFilter.style.cssText =
+    search.style.cssText;
+
+  labelFilter.style.cssText =
+    search.style.cssText;
+
   search.addEventListener("input", () => {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(applyFilters, 120);
+
+    searchTimer =
+      setTimeout(applyFilters, 120);
   });
-  areaFilter.addEventListener("change", applyFilters);
-  labelFilter.addEventListener("change", applyFilters);
-  filters.style.cssText = "display:grid;grid-template-columns:2fr 1fr 1fr;gap:.6rem;margin:.75rem 0";
-  filters.append(search, areaFilter, labelFilter);
-    list.id = "entitiesList";
+
+  areaFilter.addEventListener(
+    "change",
+    applyFilters
+  );
+
+  labelFilter.addEventListener(
+    "change",
+    applyFilters
+  );
+
+  filters.style.cssText =
+    "display:grid;grid-template-columns:2fr 1fr 1fr;gap:.6rem;margin:.75rem 0";
+
+  filters.append(
+    search,
+    areaFilter,
+    labelFilter
+  );
+
+  list.id = "entitiesList";
   list.style.maxHeight = "65vh";
   list.style.overflowY = "auto";
   list.style.overflowX = "hidden";
   list.style.scrollbarGutter = "stable";
 
-    if (entitiesData.length === 0) {
-      list.innerHTML = `<p>${escapeHtml(t("areas.noEntities"))}</p>`;
-    } else {
-      list.innerHTML = entitiesData.map((entity) => {
-        const areaName = entity.area_id
-          ? (areaNames.get(entity.area_id) || t("areas.noArea"))
-          : t("areas.noArea");
+  list.addEventListener("scroll", () => {
+    const remaining =
+      list.scrollHeight -
+      list.scrollTop -
+      list.clientHeight;
 
-        const labelNames = getEntityLabelNames(entity);
-
-        return `
-          <article class="card phoenix-entity-card" data-entity-id="${escapeHtml(entity.entity_id)}">
-            <h3>${escapeHtml(entity.name || entity.original_name || entity.entity_id)}</h3>
-
-            <p>${escapeHtml(t("areas.entityId"))}: <strong>${escapeHtml(entity.entity_id)}</strong></p>
-            <p>${escapeHtml(t("areas.platform"))}: ${escapeHtml(entity.platform || "-")} · ${escapeHtml(t("areas.category"))}: ${escapeHtml(entity.entity_category || "-")}</p>
-
-            <p>
-              ${escapeHtml(t("areas.title"))}:
-              <strong>${escapeHtml(areaName)}</strong>
-            </p>
-
-            <p>
-              ${escapeHtml(t("navigation.labels"))}:
-              <strong>${escapeHtml(labelNames.length ? labelNames.join(", ") : "-")}</strong>
-            </p>
-
-            <div class="entity-actions">
-              <button
-                type="button"
-                data-entity-action="details"
-                data-entity-id="${escapeHtml(entity.entity_id)}"
-              >
-                ℹ️ ${escapeHtml(t("areas.details"))}
-              </button>
-
-              <button
-                type="button"
-                data-entity-action="name"
-                data-entity-id="${escapeHtml(entity.entity_id)}"
-              >
-                ${escapeHtml(t("areas.changeName"))}
-              </button>
-
-              <button
-                type="button"
-                data-entity-action="area"
-                data-entity-id="${escapeHtml(entity.entity_id)}"
-              >
-                ${escapeHtml(t("areas.changeArea"))}
-              </button>
-
-              <button
-                type="button"
-                data-entity-action="labels"
-                data-entity-id="${escapeHtml(entity.entity_id)}"
-              >
-                ${escapeHtml(t("areas.changeLabels"))}
-              </button>
-            </div>
-          </article>
-        `;
-      }).join("");
+    if (remaining < 500) {
+      renderNextBatch();
     }
+  });
+
+  if (entitiesData.length === 0) {
+    list.innerHTML =
+      `<p>${
+        escapeHtml(t("areas.noEntities"))
+      }</p>`;
+  } else {
+    renderNextBatch();
+  }
+
+  updateStatus();
 
 
     list.addEventListener("click", async (event) => {

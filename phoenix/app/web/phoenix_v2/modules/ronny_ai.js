@@ -118,16 +118,36 @@ export async function renderRonnyAI() {
           0 0 42px rgba(216,82,199,.10);
       }
 
+      .ronny-ai-hero > * {
+        min-width: 0;
+      }
+
       .ronny-ai-hero h2 {
         margin: 0;
+        max-width: 100%;
         font-size: clamp(1.55rem, 3vw, 2.2rem);
+        overflow-wrap: anywhere;
       }
 
       .ronny-ai-hero p {
         margin: 7px 0 0;
+        width: 100%;
         max-width: 720px;
         opacity: .72;
         line-height: 1.5;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
+      @media (max-width: 760px) {
+        .ronny-ai-hero {
+          min-width: 0;
+          max-width: 100%;
+        }
+
+        .ronny-ai-hero p {
+          max-width: 100%;
+        }
       }
 
       .ronny-ai-status {

@@ -43,6 +43,10 @@ import {
   getLanguage
 } from "../core/i18n.js?v=20260929-0635";
 
+import {
+  phoenixConfirm
+} from "../core/dialog.js?v=20261007-0834";
+
 let scriptServices = [];
 let scriptEntities = [];
 let scriptDevices = [];
@@ -1446,7 +1450,7 @@ function attachScriptEntityChoices(
     .querySelectorAll(
       "[data-action-target-entity]"
     )
-    .forEach((field, index) => {
+    .forEach((field) => {
       const card =
         field.closest("[data-action-path]");
 
@@ -1459,20 +1463,6 @@ function attachScriptEntityChoices(
         String(actionField?.value || "")
           .split(".", 1)[0];
 
-      const listId =
-        `scriptEntityOptions${index}`;
-
-      let datalist =
-        editor.querySelector(`#${listId}`);
-
-      if (!datalist) {
-        datalist =
-          document.createElement("datalist");
-
-        datalist.id = listId;
-        editor.appendChild(datalist);
-      }
-
       const matching =
         entities.filter((entity) => {
           if (!domain) return true;
@@ -1484,29 +1474,179 @@ function attachScriptEntityChoices(
           );
         });
 
-      datalist.innerHTML =
-        matching
-          .map((entity) => {
+      field.removeAttribute("list");
+      field.setAttribute("autocomplete", "off");
+
+      let wrapper =
+        field.closest(".script-entity-choice");
+
+      if (!wrapper) {
+        wrapper =
+          document.createElement("div");
+
+        wrapper.className =
+          "script-entity-choice";
+
+        field.parentNode.insertBefore(
+          wrapper,
+          field
+        );
+
+        wrapper.appendChild(field);
+      }
+
+      let menu =
+        wrapper.querySelector(
+          ".script-entity-choice-menu"
+        );
+
+      if (!menu) {
+        menu =
+          document.createElement("div");
+
+        menu.className =
+          "script-entity-choice-menu";
+
+        wrapper.appendChild(menu);
+      }
+
+      const renderMenu = () => {
+        const value =
+          String(field.value || "");
+
+        const parts =
+          value.split(",");
+
+        const query =
+          String(parts.pop() || "")
+            .trim()
+            .toLocaleLowerCase();
+
+        const selected =
+          new Set(
+            parts
+              .map((item) => item.trim())
+              .filter(Boolean)
+          );
+
+        const results =
+          matching
+            .filter((entity) => {
+              const entityId =
+                String(entity.entity_id || "");
+
+              const name =
+                String(entity.name || entityId);
+
+              if (selected.has(entityId)) {
+                return false;
+              }
+
+              if (!query) return true;
+
+              return (
+                entityId
+                  .toLocaleLowerCase()
+                  .includes(query) ||
+                name
+                  .toLocaleLowerCase()
+                  .includes(query)
+              );
+            })
+            .slice(0, 80);
+
+        menu.innerHTML =
+          results
+            .map((entity) => {
+              const entityId =
+                entity.entity_id || "";
+
+              const name =
+                entity.name || entityId;
+
+              return `
+                <button
+                  type="button"
+                  class="script-entity-choice-option"
+                  data-script-entity-choice="${escapeHtml(entityId)}"
+                >
+                  <span>${escapeHtml(name)}</span>
+                  <small>${escapeHtml(entityId)}</small>
+                </button>
+              `;
+            })
+            .join("");
+
+        menu.hidden =
+          results.length === 0;
+      };
+
+      if (field.dataset.phoenixEntityChoice !== "1") {
+        field.dataset.phoenixEntityChoice = "1";
+
+        field.addEventListener(
+          "focus",
+          renderMenu
+        );
+
+        field.addEventListener(
+          "input",
+          renderMenu
+        );
+
+        wrapper.addEventListener(
+          "mousedown",
+          (event) => {
+            const option =
+              event.target.closest(
+                "[data-script-entity-choice]"
+              );
+
+            if (!option) return;
+
+            event.preventDefault();
+
             const entityId =
-              entity.entity_id || "";
+              option.dataset.scriptEntityChoice;
 
-            const name =
-              entity.name || entityId;
+            const parts =
+              String(field.value || "")
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean);
 
-            return `
-              <option
-                value="${escapeHtml(entityId)}"
-                label="${escapeHtml(name)}"
-              ></option>
-            `;
-          })
-          .join("");
+            if (parts.length) {
+              parts.pop();
+            }
 
-      field.setAttribute("list", listId);
-      field.setAttribute(
-        "autocomplete",
-        "off"
-      );
+            parts.push(entityId);
+
+            field.value =
+              parts.join(", ");
+
+            field.dispatchEvent(
+              new Event(
+                "input",
+                { bubbles: true }
+              )
+            );
+
+            menu.hidden = true;
+            field.focus();
+          }
+        );
+
+        field.addEventListener(
+          "blur",
+          () => {
+            setTimeout(() => {
+              menu.hidden = true;
+            }, 120);
+          }
+        );
+      }
+
+      menu.hidden = true;
     });
 }
 
@@ -1538,7 +1678,7 @@ function attachScriptServiceChoices(editor, services) {
       search.className =
         "script-service-search";
       search.placeholder =
-        "Dienst suchen …";
+        t("scripts.serviceSearchPlaceholder");
       search.autocomplete = "off";
 
       const select =
@@ -2611,11 +2751,16 @@ export async function renderScripts() {
       const scriptId =
         entityId.replace(/^script\./, "");
 
-      if (
-        !window.confirm(
-          t("scripts.deleteConfirm")
-        )
-      ) {
+      const confirmed =
+        await phoenixConfirm(
+          t("scripts.deleteConfirm"),
+          {
+            title: t("scripts.delete"),
+            danger: true
+          }
+        );
+
+      if (!confirmed) {
         return;
       }
 
