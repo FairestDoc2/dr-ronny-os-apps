@@ -391,6 +391,163 @@ class ReleaseEngine:
         }
 
     @staticmethod
+    def sync_remote(
+        repository: Path,
+        token: str,
+        branch: str = "main",
+    ) -> dict[str, Any]:
+        """
+        Synchronisiert das Release-Repository sicher mit GitHub.
+
+        Erlaubt nur einen Fast-Forward. Lokale Commits werden
+        niemals überschrieben und es wird kein Force-Push benutzt.
+        """
+        import os
+        import subprocess
+
+        if not repository.is_dir():
+            raise RuntimeError("Release-Repository fehlt.")
+
+        if not (repository / ".git").exists():
+            raise RuntimeError(
+                "Release-Verzeichnis ist kein Git-Repository."
+            )
+
+        token = token.strip()
+
+        if not token:
+            raise RuntimeError(
+                "GitHub-Token ist nicht konfiguriert."
+            )
+
+        env = os.environ.copy()
+        env["PHOENIX_GITHUB_TOKEN"] = token
+        env["GIT_TERMINAL_PROMPT"] = "0"
+        env["GIT_USERNAME"] = "FairestDoc2"
+        env["GIT_ASKPASS_REQUIRE"] = "force"
+
+        askpass_path = repository / ".phoenix-git-askpass.sh"
+        env["GIT_ASKPASS"] = str(askpass_path)
+
+        askpass = (
+            'case "$1" in '
+            '*Username*) printf "%s\\n" "$GIT_USERNAME" ;; '
+            '*) printf "%s\\n" "$PHOENIX_GITHUB_TOKEN" ;; '
+            'esac'
+        )
+
+        try:
+            askpass_path.write_text(
+                "#!/bin/sh\n" + askpass + "\n",
+                encoding="utf-8",
+            )
+            askpass_path.chmod(0o700)
+
+            fetch = subprocess.run(
+                [
+                    "git", "-C", str(repository),
+                    "fetch", "origin", branch,
+                ],
+                capture_output=True,
+                text=True,
+                timeout=120,
+                check=False,
+                env=env,
+            )
+
+            if fetch.returncode != 0:
+                raise RuntimeError(
+                    fetch.stderr.strip()
+                    or "GitHub-Fetch fehlgeschlagen."
+                )
+
+            local = subprocess.run(
+                [
+                    "git", "-C", str(repository),
+                    "rev-parse", "HEAD",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=30,
+                check=False,
+            )
+
+            remote = subprocess.run(
+                [
+                    "git", "-C", str(repository),
+                    "rev-parse", f"origin/{branch}",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=30,
+                check=False,
+            )
+
+            if local.returncode != 0 or remote.returncode != 0:
+                raise RuntimeError(
+                    "Git-Stand konnte nicht ermittelt werden."
+                )
+
+            local_head = local.stdout.strip()
+            remote_head = remote.stdout.strip()
+
+            if local_head == remote_head:
+                return {
+                    "ok": True,
+                    "synced": False,
+                    "branch": branch,
+                    "head": local_head,
+                }
+
+            ancestor = subprocess.run(
+                [
+                    "git", "-C", str(repository),
+                    "merge-base", "--is-ancestor",
+                    local_head, remote_head,
+                ],
+                timeout=30,
+                check=False,
+            )
+
+            if ancestor.returncode != 0:
+                raise RuntimeError(
+                    "Lokales und GitHub-Repository sind "
+                    "auseinandergelaufen. Veröffentlichung "
+                    "wurde sicher abgebrochen."
+                )
+
+            merge = subprocess.run(
+                [
+                    "git", "-C", str(repository),
+                    "merge", "--ff-only",
+                    f"origin/{branch}",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=60,
+                check=False,
+            )
+
+            if merge.returncode != 0:
+                raise RuntimeError(
+                    merge.stderr.strip()
+                    or "GitHub-Fast-Forward fehlgeschlagen."
+                )
+
+            return {
+                "ok": True,
+                "synced": True,
+                "branch": branch,
+                "head": remote_head,
+            }
+
+        finally:
+            try:
+                askpass_path.unlink()
+            except FileNotFoundError:
+                pass
+
+    @staticmethod
     def push_release(
         repository: Path,
         token: str,

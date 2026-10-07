@@ -772,6 +772,12 @@ def phoenix_system_control_developer_publish():
                 "als die veröffentlichte Version sein."
             )
 
+        ReleaseEngine.sync_remote(
+            PHOENIX_RELEASE_ROOT,
+            token,
+            branch="main",
+        )
+
         release_head = (
             ReleaseEngine.get_repository_head(
                 PHOENIX_RELEASE_ROOT
