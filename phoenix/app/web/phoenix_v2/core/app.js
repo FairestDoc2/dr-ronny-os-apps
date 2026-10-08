@@ -43,6 +43,11 @@ import {
 } from "../modules/help.js?v=20261006-help";
 
 import {
+  renderDeveloper
+} from "../modules/developer.js?v=20261007-developer";
+
+
+import {
   renderHomeAssistant
 } from "../modules/home_assistant.js?v=20260928-1050";
 
@@ -110,11 +115,49 @@ const navigationItems = [
     key: "navigation.settings"
   },
   {
+    route: "developer",
+    icon: "🛠️",
+    key: "navigation.developer",
+    developerOnly: true
+  },
+  {
     route: "help",
     icon: "❓",
     key: "navigation.help"
   }
 ];
+
+let developerNavigationAllowed = false;
+
+async function loadDeveloperNavigationAccess() {
+  try {
+    const response = await fetch(
+      "api/phoenix/system-control/status"
+    );
+
+    const status = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        status.detail ||
+        status.error ||
+        `HTTP ${response.status}`
+      );
+    }
+
+    developerNavigationAllowed =
+      status.owner_installation === true &&
+      status.developer_mode === true;
+
+  } catch (error) {
+    developerNavigationAllowed = false;
+
+    console.debug(
+      "[Phoenix V2] Entwickler-Navigation nicht verfügbar:",
+      error
+    );
+  }
+}
 
 function renderNavigation() {
   const navigation =
@@ -127,6 +170,11 @@ function renderNavigation() {
 
   navigation.innerHTML =
     navigationItems
+      .filter(
+        item =>
+          item.developerOnly !== true ||
+          developerNavigationAllowed
+      )
       .map(item => `
         <button
           class="nav-button ${
@@ -301,6 +349,12 @@ function registerRoutes() {
   );
 
   registerRoute(
+    "developer",
+    renderDeveloper
+  );
+
+
+  registerRoute(
     "home-assistant",
     renderHomeAssistant
   );
@@ -353,6 +407,9 @@ async function startPhoenixV2() {
 
   registerRoutes();
   bindInterface();
+
+  await loadDeveloperNavigationAccess();
+
   renderNavigation();
   updateLanguageDisplay();
 
@@ -364,6 +421,14 @@ async function startPhoenixV2() {
   window.addEventListener(
     "phoenix-v2:route-changed",
     renderNavigation
+  );
+
+  window.addEventListener(
+    "phoenix-v2:developer-mode-changed",
+    async () => {
+      await loadDeveloperNavigationAccess();
+      renderNavigation();
+    }
   );
 
   // Home-Assistant-Daten bereits laden,

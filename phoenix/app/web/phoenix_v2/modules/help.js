@@ -34,7 +34,9 @@ export async function renderHelp() {
 
     if (response.ok) {
       const status = await response.json();
-      developerMode = status.developer_mode === true;
+      developerMode =
+        status.owner_installation === true &&
+        status.developer_mode === true;
     }
   } catch (error) {
     console.warn(
@@ -75,6 +77,9 @@ export async function renderHelp() {
       <a href="#help-actions">⚡ ${t("help.actionsTitle")}</a>
       <a href="#help-ai">🧠 ${t("help.aiTitle")}</a>
       <a href="#help-backups">💾 ${t("help.backupsTitle")}</a>
+      ${developerMode ? `
+      <a href="#help-developer">🛠️ ${t("help.developerTitle")}</a>
+      ` : ""}
       <a href="#help-contact">✉️ ${t("help.contactTitle")}</a>
     </nav>
 
@@ -243,11 +248,16 @@ export async function renderHelp() {
         <p>${t("help.backupDifferenceText")}</p>
       </article>
 
-      ${developerMode ? `
-      <article class="card help-developer-card">
-        <h3>🛠️ ${t("help.developerTitle")}</h3>
-        <p>${t("help.developerText")}</p>
+    </section>
 
+    ${developerMode ? `
+    <section id="help-developer" class="help-section">
+      <div class="page-header help-section-header">
+        <h2>🛠️ ${t("help.developerTitle")}</h2>
+        <p>${t("help.developerText")}</p>
+      </div>
+
+      <article class="card help-developer-card">
         <ul class="help-detail-list">
           <li>${t("help.developerPoint1")}</li>
           <li>${t("help.developerPoint2")}</li>
@@ -259,8 +269,8 @@ export async function renderHelp() {
           🔒 ${t("help.developerWarning")}
         </p>
       </article>
-      ` : ""}
     </section>
+    ` : ""}
 
     <section id="help-contact" class="help-section">
       <div class="page-header help-section-header">

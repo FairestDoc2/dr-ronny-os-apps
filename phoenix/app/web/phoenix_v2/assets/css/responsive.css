@@ -1066,3 +1066,85 @@ button,
     min-height: 42px;
   }
 }
+
+/* Phoenix Developer Page – Responsive Layout */
+
+.developer-publish-card,
+.developer-update-card {
+  min-width: 0;
+}
+
+.developer-publish-card input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+}
+
+.developer-version-bump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.developer-version-bump .btn {
+  flex: 1 1 120px;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.developer-publish-card > button,
+.developer-update-card > button {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .developer-version-bump {
+    flex-direction: column;
+  }
+
+  .developer-version-bump .btn {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .developer-publish-card > button,
+  .developer-update-card > button {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+/* Phoenix GitHub Dashboard Layout */
+.phoenix-github-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.phoenix-github-grid > .card { min-width: 0; }
+@media (max-width: 900px) {
+  .phoenix-github-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+
+/* Phoenix GitHub Insights – lokale Ansicht nur auf der Entwicklerseite */
+.phoenix-github-insights { margin-top: 24px; }
+.phoenix-github-insights > h3 { margin: 0 0 12px; }
+.phoenix-insights-grid { margin-top: 0; }
+.phoenix-insights-content { margin-top: 12px; }
+.phoenix-insights-list { display: grid; gap: 8px; }
+.phoenix-insights-row { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 7px 0; border-bottom: 1px solid var(--border-color, rgba(128,128,128,.2)); }
+.phoenix-insights-label { flex: 1 1 auto; overflow-wrap: anywhere; min-width: 0; }
+.phoenix-insights-row strong { flex: 0 0 auto; font-variant-numeric: tabular-nums; }
+.phoenix-insights-bar-label { flex: 0 0 82px; font-size: .82em; }
+.phoenix-insights-bar-track { flex: 1 1 auto; min-width: 20px; height: 10px; overflow: hidden; border-radius: 8px; background: rgba(128,128,128,.18); }
+.phoenix-insights-bar { height: 100%; border-radius: 8px; background: var(--primary-color, #5588cc); }
+@media (max-width: 600px) { .phoenix-insights-row { gap: 6px; } .phoenix-insights-bar-label { flex-basis: 67px; } }

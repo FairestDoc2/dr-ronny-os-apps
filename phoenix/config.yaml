@@ -1,5 +1,5 @@
 name: "Dr. Ronny OS Phoenix"
-version: "1.0.34"
+version: "1.2.05"
 stage: stable
 slug: "ronny_phoenix"
 description: "Smart-Home Control Center für Home Assistant mit KI, Verwaltung, Automationen, Skripten und Sicherungen"

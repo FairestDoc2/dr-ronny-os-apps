@@ -351,49 +351,6 @@ async function setDeveloperMode(enabled) {
 }
 
 
-async function updateDeveloperVersion() {
-  const response = await fetch(
-    "api/phoenix/system-control/developer-update",
-    {
-      method: "POST"
-    }
-  );
-
-  const data = await response.json();
-
-  if (!response.ok || data.status === "error") {
-    throw new Error(
-      data.detail ||
-      data.error ||
-      "Entwicklerversion konnte nicht aktualisiert werden."
-    );
-  }
-
-  return data;
-}
-
-
-async function publishDeveloperVersion() {
-  const response = await fetch(
-    "api/phoenix/system-control/developer-publish",
-    {
-      method: "POST"
-    }
-  );
-
-  const data = await response.json();
-
-  if (!response.ok || data.status === "error") {
-    throw new Error(
-      data.detail ||
-      data.error ||
-      "Phoenix-Version konnte nicht veröffentlicht werden."
-    );
-  }
-
-  return data;
-}
-
 function renderSnapshots(data) {
   const snapshots = data.snapshots || [];
 
@@ -699,20 +656,12 @@ export async function renderSettings() {
         ]);
 
     const phoenix = status.phoenix || {};
-    const project = status.project || {};
-      const ownerInstallation =
-        status.owner_installation === true;
+    const ownerInstallation =
+      status.owner_installation === true;
 
-      const developerMode =
-        status.developer_mode === true;
+    const developerMode =
+      status.developer_mode === true;
 
-      const releaseVersions =
-        status.release_versions || {};
-
-      const git =
-        developerMode
-          ? (project.git || {})
-          : {};
     const doctor = status.doctor || {};
 
     page.innerHTML = `
@@ -794,145 +743,6 @@ export async function renderSettings() {
           </article>
         ` : ""}
 
-        ${developerMode ? `
-        <article class="card developer-update-card">
-          <h3>
-            🔄 ${t("settings.developerUpdate")}
-          </h3>
-
-          <p>
-            ${t("settings.developerUpdateDescription")}
-          </p>
-
-          <button
-            id="developerUpdateButton"
-            type="button"
-            class="btn"
-          >
-            🔄 ${t("settings.developerUpdate")}
-          </button>
-
-          <p id="developerUpdateStatus"></p>
-        </article>
-        ` : ""}
-
-        ${developerMode ? `
-        <article class="card developer-publish-card">
-          <h3>
-            🚀 ${t("settings.developerPublish")}
-          </h3>
-
-          <p>
-            ${t("settings.developerPublishDescription")}
-          </p>
-
-          <p>
-            ${t("settings.developerPublishedVersion")}:
-            <strong class="technical-value">
-              ${escapeHtml(
-                releaseVersions.published_version || "–"
-              )}
-            </strong>
-          </p>
-
-          <p>
-            ${t("settings.developerDevelopmentVersion")}:
-            <strong class="technical-value">
-              ${escapeHtml(
-                releaseVersions.development_version || "–"
-              )}
-            </strong>
-          </p>
-
-          <p>
-            ${t("settings.developerPublishVersion")}:
-            <strong class="technical-value">
-              ${escapeHtml(
-                releaseVersions.publish_version || "–"
-              )}
-            </strong>
-          </p>
-
-          <div>
-            <input
-              id="developerVersionInput"
-              type="text"
-              inputmode="decimal"
-              autocomplete="off"
-              value="${escapeHtml(
-                releaseVersions.development_version || ""
-              )}"
-              placeholder="1.0.27"
-            >
-
-            <button
-              id="developerVersionSaveButton"
-              type="button"
-              class="btn"
-            >
-              💾 ${t("settings.developerVersionSave")}
-            </button>
-          </div>
-
-          <p id="developerVersionStatus"></p>
-
-          <button
-            id="developerPublishButton"
-            type="button"
-            class="btn"
-          >
-            🚀 ${t("settings.developerPublish")}
-          </button>
-
-          <p id="developerPublishStatus"></p>
-        </article>
-        ` : ""}
-
-        ${developerMode ? `
-        <article class="card">
-          <h3>🌿 Git</h3>
-
-          ${
-            git.available === false
-              ? `
-                <p>
-                  <strong>
-                    ⚪ ${t("settings.gitUnavailable")}
-                  </strong>
-                </p>
-              `
-              : `
-                <p>
-                  ${t("settings.branch")}:
-                  <strong>
-                    ${escapeHtml(git.branch || "–")}
-                  </strong>
-                </p>
-
-                <p>
-                  ${t("settings.commit")}:
-                  <strong class="technical-value">
-                    ${escapeHtml(git.commit || "–")}
-                  </strong>
-                </p>
-
-                <p>
-                  ${t("settings.workingTree")}:
-                  <strong>
-                    ${
-                      git.clean === true
-                        ? `✅ ${t("settings.clean")}`
-                        : git.clean === false
-                          ? `⚠️ ${t("settings.dirty")}`
-                          : `⚪ ${t("settings.gitUnknown")}`
-                    }
-                  </strong>
-                </p>
-              `
-          }
-        </article>
-        ` : ""}
-
         <article class="card">
           <h3>🧠 ${t("settings.osSnapshots")}</h3>
           <p>
@@ -1003,41 +813,6 @@ export async function renderSettings() {
       const developerModeToggle =
         document.getElementById(
           "developerModeToggle"
-        );
-
-      const developerUpdateButton =
-        document.getElementById(
-          "developerUpdateButton"
-        );
-
-      const developerUpdateStatus =
-        document.getElementById(
-          "developerUpdateStatus"
-        );
-
-      const developerVersionInput =
-        document.getElementById(
-          "developerVersionInput"
-        );
-
-      const developerVersionSaveButton =
-        document.getElementById(
-          "developerVersionSaveButton"
-        );
-
-      const developerVersionStatus =
-        document.getElementById(
-          "developerVersionStatus"
-        );
-
-      const developerPublishButton =
-        document.getElementById(
-          "developerPublishButton"
-        );
-
-      const developerPublishStatus =
-        document.getElementById(
-          "developerPublishStatus"
         );
 
     const createButton =
@@ -1220,6 +995,12 @@ export async function renderSettings() {
               !developerMode
             );
 
+            window.dispatchEvent(
+              new CustomEvent(
+                "phoenix-v2:developer-mode-changed"
+              )
+            );
+
             await renderSettings();
 
           } catch (error) {
@@ -1228,146 +1009,6 @@ export async function renderSettings() {
             window.alert(
               error.message
             );
-          }
-        }
-      );
-    }
-
-    if (
-      developerVersionSaveButton &&
-      developerVersionInput
-    ) {
-      developerVersionSaveButton.addEventListener(
-        "click",
-        async () => {
-          const version =
-            developerVersionInput.value.trim();
-
-          try {
-            developerVersionSaveButton.disabled = true;
-
-            if (developerVersionStatus) {
-              developerVersionStatus.textContent =
-                `⏳ ${t("settings.developerVersionSaving")}`;
-            }
-
-            const response = await fetch(
-              "./api/phoenix/system-control/developer-version",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                  version
-                })
-              }
-            );
-
-            const result = await response.json();
-
-            if (
-              !response.ok ||
-              result.status !== "ok"
-            ) {
-              throw new Error(
-                result.error ||
-                result.detail ||
-                "Unknown error"
-              );
-            }
-
-            if (developerVersionStatus) {
-              developerVersionStatus.textContent =
-                `✅ ${t("settings.developerVersionSaved")}`;
-            }
-
-            await renderSettings();
-
-          } catch (error) {
-            developerVersionSaveButton.disabled = false;
-
-            if (developerVersionStatus) {
-              developerVersionStatus.textContent =
-                `❌ ${error.message}`;
-            }
-          }
-        }
-      );
-    }
-
-    if (developerPublishButton) {
-      developerPublishButton.addEventListener(
-        "click",
-        async () => {
-          const version =
-            releaseVersions.development_version || "";
-
-          const confirmed = window.confirm(
-            t("settings.developerPublishConfirm", {
-              version
-            })
-          );
-
-          if (!confirmed) {
-            return;
-          }
-
-          try {
-            developerPublishButton.disabled = true;
-
-            if (developerPublishStatus) {
-              developerPublishStatus.textContent =
-                `⏳ ${t("settings.developerPublishRunning")}`;
-            }
-
-            await publishDeveloperVersion();
-
-            if (developerPublishStatus) {
-              developerPublishStatus.textContent =
-                `✅ ${t("settings.developerPublishSuccess")}`;
-            }
-
-            await renderSettings();
-
-          } catch (error) {
-            developerPublishButton.disabled = false;
-
-            if (developerPublishStatus) {
-              developerPublishStatus.textContent =
-                `❌ ${error.message}`;
-            }
-          }
-        }
-      );
-    }
-
-    if (developerUpdateButton) {
-      developerUpdateButton.addEventListener(
-        "click",
-        async () => {
-          try {
-            developerUpdateButton.disabled = true;
-
-            if (developerUpdateStatus) {
-              developerUpdateStatus.textContent =
-                `⏳ ${t("settings.developerUpdateRunning")}`;
-            }
-
-            await updateDeveloperVersion();
-
-            if (developerUpdateStatus) {
-              developerUpdateStatus.textContent =
-                `✅ ${t("settings.developerUpdateSuccess")}`;
-            }
-
-          } catch (error) {
-            developerUpdateButton.disabled = false;
-
-            if (developerUpdateStatus) {
-              developerUpdateStatus.textContent =
-                `❌ ${error.message}`;
-            }
           }
         }
       );
